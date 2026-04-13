@@ -43,7 +43,7 @@ Return this exact structure:
       "title": "A UNIQUE VISCERAL TITLE IN CAPS",
       "source": "SPECIFIC_DATA_SOURCE_NAME",
       "paragraphs": ["p1", "p2", "p3", "p4", "p5", "p6"],
-      "key_stats": ["Punchy 3-5 word stat", "Behavioral fact phrase", "Insight signal", "Core numeric marker"]
+      "key_stats": ["stat1", "stat2", "stat3", "stat4", "stat5", "stat6"]
     }
   ],
   "pdf_metadata": {
@@ -133,22 +133,27 @@ understands slides 1 through 8.
 HARD RULES:
 - Slides 1 and 2 must use first person I statements throughout
 - Slide 3 onwards uses third person only
-- Each slide must contain exactly 4 highlighted phrases total 
-  spread across the 6 paragraphs. Do not highlight only percentages. 
-  Highlight a mix of: one percentage or number, one behavioral 
-  pattern phrase of 4 to 7 words, one market insight phrase of 
-  4 to 6 words, and one psychological or cultural observation 
-  phrase. Wrap the entire meaningful phrase in the span tag not 
-  just the number. Example of good highlighting: 
-  <span class='highlight'>toys discarded within the first fortnight</span> 
-  or <span class='highlight'>guilt overrides rational purchasing logic</span> 
-  or <span class='highlight'>34% drop in sustained play duration</span>. 
-  Never highlight a standalone percentage with no context around it.
-- Each slide must include a "key_stats" array of exactly 4 items. 
-  Each item is a punchy 3 to 5 word phrase representing a core 
-  stat or behavioral fact from that slide. These will be displayed 
-  as sidebar bullets. Example: "75% toy abandonment rate" or 
-  "Screen wins every time" or "₹1200 monthly spend" or "Status drives purchase".
+- Each slide must contain exactly 6 highlighted phrases total 
+  spread across the 6 paragraphs, meaning every paragraph must have 
+  one highlight. Do not highlight only percentages. Each 
+  highlight must be a different type — rotate through: a 
+  shocking statistic, a behavioral contradiction phrase, a 
+  cultural observation, a market mechanic phrase, a 
+  psychological insight phrase, and a power dynamic phrase. 
+  Every highlight must be 4 to 9 words long wrapping the full 
+  meaningful phrase not just a number. Examples of correct 
+  highlights: <span class='highlight'>three out of four toys 
+  abandoned by week two</span> or <span class='highlight'>guilt 
+  purchases spike 40% post screen time</span> or <span 
+  class='highlight'>status anxiety drives premium over function
+  </span>. The highlighted phrase must be the most surprising 
+  or counterintuitive part of that paragraph — the thing a 
+  founder would screenshot.
+- Each slide must include a "key_stats" array of exactly 6 items, 
+  one derived from each paragraph. Each must be 3 to 6 words. 
+  Mix number-based stats with behavioral insight phrases. 
+  Examples: "₹1200 monthly toy spend" or "Guilt overrides logic always" 
+  or "Screen wins in 7 seconds" or "Status over substance every time".
   Vary the type of evidence used across paragraphs — use 
   anecdotes, behavioral patterns, economic logic, and cultural 
   observations alongside the two statistics. The narrative must 

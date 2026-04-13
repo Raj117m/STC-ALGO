@@ -90,27 +90,48 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
 }
 
 .stats-col {
-  width: 180px;
+  width: 200px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   margin-top: 80px;
 }
 
-.stat-item {
-  font-family: var(--font-stats);
-  font-size: 11px;
-  color: var(--gold);
-  opacity: 0.5;
+.stat-pill {
+  font-family: 'Syne Mono', monospace;
+  font-size: 10px;
   letter-spacing: 2px;
+  color: var(--gold);
+  padding: 8px 12px;
+  border: 1px solid rgba(255,204,0,0.2);
+  margin-bottom: 2px;
   text-transform: uppercase;
-  animation: statBlink 3s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+  animation: statGlow 2.5s ease-in-out infinite alternate;
 }
 
-@keyframes statBlink {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+.stat-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,204,0,0.04);
+  z-index: -1;
+}
+
+@keyframes statGlow {
+  0% { 
+    box-shadow: 0 0 4px rgba(255,204,0,0.1);
+    border-color: rgba(255,204,0,0.15);
+    opacity: 0.5;
+  }
+  100% { 
+    box-shadow: 0 0 14px rgba(255,204,0,0.4), 
+                0 0 30px rgba(255,204,0,0.1);
+    border-color: rgba(255,204,0,0.6);
+    opacity: 1;
+  }
 }
 
 .content-col {
@@ -156,14 +177,14 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
   }
   .mobile-stats-row {
     display: flex;
-    gap: 20px;
+    gap: 8px;
     width: 100%;
     overflow-x: auto;
     padding: 10px 0;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     margin-bottom: 20px;
   }
-  .stat-item { font-size: 9px; white-space: nowrap; }
+  .stat-pill { font-size: 9px; padding: 6px 8px; white-space: nowrap; }
   .content-col { max-width: 100%; }
   .hero-bg-text { font-size: 14vw; }
   .loading-big { font-size: 44px; }
@@ -173,7 +194,26 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
 
 /* REUSE OTHER STYLES FROM INDEX */
 .corner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 0 auto; }
-.stat-highlight { color: var(--gold); font-weight: 800; text-shadow: 0 0 10px rgba(255,204,0,0.5); }
+.highlight {
+  color: var(--gold);
+  font-weight: 600;
+  background: rgba(255,204,0,0.08);
+  padding: 1px 4px;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(255,204,0,0.2);
+  position: relative;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.4;
+}
 .interstitial { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; z-index:50; background:transparent !important; }
 .inter-text { font-family:var(--font-heading); font-size:clamp(40px, 6vw, 100px); font-weight:800; line-height:0.9; text-transform:uppercase; letter-spacing:-3px; }
 </style>
@@ -270,39 +310,42 @@ function populate(data) {
     if(i === 0) wrapper.appendChild(createInter("LET'S HEAR WHAT A PERSON IN YOUR MARKET IS SAYING.", true));
     
     let slide;
-    if(i < 2) slide = createPersonaSlide(s, i+1);
-    else if(i < 8) slide = createMarketSlide(s, i+1);
-    else slide = createGraphSlide(s, i+1);
+    const { title, paragraphs, key_stats, source } = s;
+    if(i < 2) slide = createPersonaSlide(title, paragraphs, key_stats, source, i+1);
+    else if(i < 8) slide = createMarketSlide(title, paragraphs, key_stats, source, i+1);
+    else slide = createGraphSlide(title, paragraphs, key_stats, source, i+1);
     
     wrapper.appendChild(slide);
   });
 }
 
-function createPersonaSlide(s, idx) { return createSlide(s, idx, 'one'); }
-function createMarketSlide(s, idx) { return createSlide(s, idx, 'market'); }
-function createGraphSlide(s, idx) { return createSlide(s, idx, 'intersection'); }
+function createPersonaSlide(t, p, ks, src, idx) { return createSlide(t, p, ks, src, idx, 'one'); }
+function createMarketSlide(t, p, ks, src, idx) { return createSlide(t, p, ks, src, idx, 'market'); }
+function createGraphSlide(t, p, ks, src, idx) { return createSlide(t, p, ks, src, idx, 'intersection'); }
 
-function createSlide(s, idx, stage) {
+function createSlide(title, paragraphs, key_stats, source, idx, stage) {
   const sec = document.createElement('section');
   sec.className = 'slide';
   sec.dataset.figureStage = stage;
-  const stats = s.key_stats || ["DATA_CORE", "SIGNAL_SYNC", "VECTOR_LOCK", "AUDIT_READY"];
-  
+  const stats = key_stats || ["SIGNAL_ZERO", "SIGNAL_ONE", "SIGNAL_TWO", "SIGNAL_THREE", "SIGNAL_FOUR", "SIGNAL_FIVE"];
+  const delays = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
+
   sec.innerHTML = `
     <div class="slide-layout">
-      <div class="mobile-stats-row" style="display:none;">${stats.map(st => `<div class="stat-item">${st}</div>`).join('')}</div>
+      <div class="mobile-stats-row" style="display:none;">${stats.map((st, i) => `<div class="stat-pill" style="animation-delay:${delays[i % delays.length]}s">${st}</div>`).join('')}</div>
       <div class="stats-col">
-        ${stats.map((st, i) => `<div class="stat-item" style="animation-delay:${i * 0.8}s">${st}</div>`).join('')}
+        ${stats.map((st, i) => `<div class="stat-pill" style="animation-delay:${delays[i % delays.length]}s">${st}</div>`).join('')}
       </div>
       <div class="content-col">
-        <h1 class="slide-heading" style="opacity:0; transform:translateX(-50px); font-family:var(--font-heading); font-size:48px;">${s.title}</h1>
+        <h1 class="slide-heading" style="opacity:0; transform:translateX(-50px); font-family:var(--font-heading); font-size:48px;">${title}</h1>
         <div class="corner-grid" style="margin-top:40px;">
-          ${s.paragraphs.map((p, i) => `
+          ${paragraphs.map((p, i) => `
             <div class="corner-box p-box" style="opacity:0; transform:translateY(30px); border-left:2px solid var(--gold); padding-left:20px;">
               <p class="p-body" style="font-size:18px; line-height:1.6; font-weight:300;">${p}</p>
             </div>
           `).join('')}
         </div>
+        <div style="font-family:var(--font-mono); font-size:8px; opacity:0.2; margin-top:40px;">SOURCE: ${source} // BLOCK_SIG: ${idx.toString().padStart(3,'0')}</div>
       </div>
     </div>
   `;
