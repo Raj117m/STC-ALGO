@@ -110,117 +110,149 @@ h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing
 .explore-trigger { display:none; margin-top:20px; }
 
 /* OUTPUT INTERSTITIALS */
-.interstitial { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10%; position:relative; z-index:50; background:var(--black); }
+.interstitial { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10%; position:relative; z-index:50; background:transparent !important; }
 .inter-text { font-family:var(--font-heading); font-size:clamp(40px, 6vw, 100px); font-weight:800; line-height:0.9; text-transform:uppercase; letter-spacing:-3px; }
 
-/* SLIDE LAYOUTS */
-#output-container { display:none; min-height:100vh; position:relative; }
+/* MOBILE-FIRST BASE STYLES */
 .slide {
   min-height: 100vh;
   position: relative;
   z-index: 10;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Stack by default */
+  padding: 80px 20px 40px;
+  overflow: hidden;
+  background: transparent !important;
 }
-.slide:nth-child(odd)  { background: #080808; }
-.slide:nth-child(even) { background: #0b0b0b; }
-.slide:nth-child(1) { border-left: 2px solid rgba(255,204,0,0.5); }
-.slide:nth-child(2) { border-left: 2px solid rgba(255,204,0,0.25); }
-.slide:nth-child(3) { border-left: 2px solid rgba(255,255,255,0.15); }
-.slide:nth-child(4) { border-left: 2px solid rgba(0,204,255,0.4); }
-.slide:nth-child(5) { border-left: 2px solid rgba(0,204,255,0.2); }
-.slide:nth-child(6) { border-left: 2px solid rgba(255,255,255,0.1); }
 
-.slide-title {
-  position: relative;
-  z-index: 40;
-  padding: 60px 40px 10px 40px;
-  text-align: left;
-}
-.slide-title h1 { font-family:var(--font-heading); font-size: clamp(32px, 5vw, 64px); letter-spacing: -3px; line-height: 0.85; font-weight:900; text-transform:uppercase; margin-bottom:5px; color:inherit; }
-.slide-tag { font-family:var(--font-mono); font-size:12px; letter-spacing:1px; color:var(--text); font-weight:800; background:var(--black); padding:5px 15px; text-transform:uppercase; }
-
-.slide-num {
+.edge-cue {
+  position: absolute;
   font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 6px;
-  color: var(--gold);
-  margin-bottom: 10px;
-  opacity: 0.7;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 5;
+}
+.cue-tl { top: 40px; left: 40px; }
+.cue-tr { top: 40px; right: 40px; }
+.cue-bl { bottom: 40px; left: 40px; }
+.cue-br { bottom: 40px; right: 40px; }
+
+.split-layout {
+  display: flex;
+  flex-direction: column; /* Vertical stack on mobile */
+  gap: 40px;
+  width: 100%;
 }
 
-/* PERSONA CORNER LAYOUT */
-.corner-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  padding: 0 40px 20px 40px;
-  gap: 12px;
-  z-index: 15;
-  height: auto;
-  min-height: 400px;
+.visual-side {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
 }
-.corner-box {
+
+.content-side {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  padding: 0 0 0 28px;
-  background: transparent;
-  border-left: 1px solid rgba(255,255,255,0.1);
-  overflow: hidden;
+  gap: 20px;
 }
+
+.slide-title h1 { 
+  font-family:var(--font-heading); 
+  font-size: clamp(28px, 8vw, 64px); 
+  line-height: 1.1; 
+  font-weight:900; 
+  text-transform:uppercase; 
+  margin-bottom:10px;
+}
+
+.corner-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column on mobile */
+  gap: 24px;
+  width: 100%;
+}
+
+.corner-box {
+  padding-left: 20px;
+  border-left: 2px solid var(--gold);
+}
+
 .p-body {
   font-family: var(--font-body);
-  font-size: 18px;
-  line-height: 1.35;
+  font-size: clamp(16px, 4vw, 20px);
+  line-height: 1.6;
   color: rgba(255,255,255,0.95);
   font-weight: 300;
   opacity: 0;
   transform: translateY(10px);
-  transition: none;
-}
-.highlight { color: var(--gold); font-weight: 900; text-shadow: 0 0 10px var(--gold); }
-#scroll-stc { 
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-  font-family: var(--font-heading); font-size: 40vw; font-weight: 900; 
-  color: rgba(255,255,255,0.02); pointer-events: none; z-index: -3; 
-  opacity: 0; visibility: hidden;
 }
 
-/* MARKET LAYOUT */
-.market-grid { display:grid; grid-template-columns: 1fr 1fr; height:100vh; padding:100px; align-items:center; }
-.market-left { display:flex; justify-content:center; align-items:center; border-right:1px solid var(--border); height:100%; }
-.market-right { padding-left:100px; display:flex; flex-direction:column; justify-content:center; }
+.stat-highlight {
+  color: var(--gold);
+  font-weight: 800;
+  text-shadow: 0 0 10px rgba(255,204,0,0.5);
+}
 
-.word { display:inline-block; margin-right:0.3em; }
-.highlight { color:var(--gold); font-weight:700; }
+#download-btn {
+  background: var(--gold);
+  border: none;
+  color: var(--black);
+  padding: 30px 80px;
+  font-family: var(--font-heading);
+  font-size: clamp(16px, 3vw, 22px);
+  letter-spacing: 5px;
+  cursor: pointer;
+  transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  font-weight: 900;
+  box-shadow: 0 0 40px rgba(243, 255, 0, 0.1);
+  margin-top: 60px;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
 
-#download-btn { background:var(--gold); color:var(--black); border:none; padding:22px 60px; font-family:var(--font-heading); font-size:16px; letter-spacing:5px; cursor:pointer; font-weight:800; margin-top:50px; }
+#download-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
+  transform: rotate(45deg);
+  transition: 0.6s;
+}
+
+#download-btn:hover {
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 20px 60px rgba(243, 255, 0, 0.3);
+}
+
+#download-btn:hover::after {
+  left: 100%;
+}
+
+@media (min-width: 1024px) {
+  .slide { padding: 100px 80px; }
+  .split-layout { flex-direction: row; align-items: flex-start; gap: 80px; }
+  .visual-side { width: 45%; height: 600px; aspect-ratio: auto; }
+  .content-side { width: 55%; }
+  .corner-grid { grid-template-columns: 1fr 1fr; }
+}
 
 @media (max-width: 768px) {
-  #screen-input { grid-template-columns: 1fr; padding: 60px 20px; }
-  .input-left { order: 2; }
-  .sbi-label { top: 30px; left: 20px; font-size: 8px; }
-  #user-input { font-size: 24px; width: 100%; }
-  #three-canvas { opacity: 0.3; }
-  .corner-grid { grid-template-columns: 1fr !important; height: auto !important; padding: 20px !important; gap: 30px !important; }
-  .corner-box { border-left: 2px solid var(--gold); padding: 20px !important; }
-  .slide-title { padding: 100px 20px 20px !important; }
-  .slide-title h1 { font-size: 28px !important; line-height: 1.1 !important; }
-  .hero-bg-text { font-size: 60px !important; }
-  .loading-big { font-size: 40px !important; }
-  .inter-text { font-size: 24px !important; line-height: 1.2 !important; }
-  .nav-bar { padding: 10px 20px; }
-  .nav-logo { font-size: 14px; }
-  .nav-tag { display: none; }
-  .nav-tag:first-child { display: block; font-size: 8px; }
-  .p-body { font-size: 16px !important; line-height: 1.4 !important; }
-  .slide { min-height: auto; padding-bottom: 60px; }
-  #output-container section { width: 100vw; overflow-x: hidden; }
+  #screen-input { grid-template-columns: 1fr; padding: 40px 20px; }
+  .nav-bar { padding: 15px 20px; }
+  .nav-tag:not(:first-child) { display: none; }
+  .hero-bg-text { font-size: 80px; }
 }
 </style>
->
 </head>
 <body>
 <audio id="bg-music" loop>
@@ -262,6 +294,11 @@ h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing
 </section>
 
 <section id="screen-input">
+  <div class="edge-cue cue-tl">[NEURAL_GATE: ACTIVE]</div>
+  <div class="edge-cue cue-tr">[SIGNAL_BUFFER: STABLE]</div>
+  <div class="edge-cue cue-bl">[VECTOR_MAP: READY]</div>
+  <div class="edge-cue cue-br">[AUDIT_LINK: ESTABLISHED]</div>
+  
   <div class="sbi-label">Strategic Behavioural Intelligence</div>
   <div class="hero-bg-text" id="bg-char-count">000</div>
   <div class="input-left">
@@ -318,17 +355,11 @@ function updateCharCount(el) {
 
 function enterApp() {
   gsap.to('#screen-welcome', {
-    scale: 1.08,
-    opacity: 0,
-    duration: 1.0,
-    ease: "power2.inOut",
+    scale: 1.08, opacity: 0, duration: 1.0, ease: "power2.inOut",
     onComplete: () => {
       document.getElementById('screen-welcome').style.display = 'none';
       document.getElementById('screen-input').style.display = 'grid';
-      gsap.fromTo('#screen-input',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }
-      );
+      gsap.fromTo('#screen-input', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" });
     }
   });
 }
@@ -342,63 +373,34 @@ grid.rotation.x=Math.PI/2; grid.position.y=-4; sc.add(grid);
 const knotMat=new THREE.MeshPhysicalMaterial({color:0xffffff, metalness:0, roughness:0.05, transmission:1, thickness:5, ior:1.5, reflectivity:0.8, clearcoat:1, clearcoatRoughness:0.1, emissive:0xffffff, emissiveIntensity:0.02, transparent:true});
 const knot=new THREE.Mesh(new THREE.TorusKnotGeometry(1.6,0.5,300,48,3,4), knotMat); sc.add(knot);
 
-// Lights for Physical materials
 const ambient = new THREE.AmbientLight(0xffffff, 0.5); sc.add(ambient);
 const point = new THREE.PointLight(0xffffff, 1); point.position.set(5,5,5); sc.add(point);
-
-const texLoader = new THREE.TextureLoader();
-const personaTex = texLoader.load('/Users/rajdeepmalladeb/.gemini/antigravity/brain/ad4cc313-7472-4330-9237-4a0f1abfae80/persona_silhouette_subtle_1775994698310.png');
-const marketTex = texLoader.load('/Users/rajdeepmalladeb/.gemini/antigravity/brain/ad4cc313-7472-4330-9237-4a0f1abfae80/market_stall_abstract_3d_1776011364135.png');
-
-const personaPlane = new THREE.Mesh(new THREE.PlaneGeometry(5,5), new THREE.MeshBasicMaterial({map:personaTex, transparent:true, opacity:0}));
-personaPlane.position.z = -1; sc.add(personaPlane);
-
-const marketPlane = new THREE.Mesh(new THREE.PlaneGeometry(7,7), new THREE.MeshBasicMaterial({map:marketTex, transparent:true, opacity:0}));
-marketPlane.position.z = -1.5; marketPlane.position.x = -3; sc.add(marketPlane);
 
 function anim(){
   requestAnimationFrame(anim);
   knot.rotation.z+=0.002; knot.rotation.y+=0.004;
-  
-  // Bob figures
   figureGroup.children.forEach(fig => {
-    if(fig.userData.baseY !== undefined) {
-      fig.position.y = fig.userData.baseY + 
-        Math.sin(Date.now()*0.001 + fig.userData.bobOffset) * 0.04;
-    }
+    if(fig.userData.baseY !== undefined) fig.position.y = fig.userData.baseY + Math.sin(Date.now()*0.001 + fig.userData.bobOffset) * 0.04;
   });
-  
-  // Dynamic knot color based on scroll stage
-  const sy = window.scrollY, vh = window.innerHeight;
-  knot.position.x = Math.sin(sy * 0.002) * 2;
-  knot.position.y = Math.cos(sy * 0.001) * 1;
-  knot.scale.setScalar(1 + Math.sin(sy * 0.003) * 0.2);
-  
-  if(sy > vh*4) {
-    personaPlane.material.opacity = gsap.utils.clamp(0, 0.4, (sy-(vh*2))/vh);
-  }
-  if(sy > vh*6) {
-    marketPlane.material.opacity = gsap.utils.clamp(0, 0.4, (sy-(vh*4))/vh);
-    personaPlane.position.x = gsap.utils.interpolate(0, 3, (sy-vh*4)/(vh*3));
-  }
-  
+  const sy = window.scrollY;
+  knot.position.x = Math.sin(sy * 0.001) * 2;
+  knot.position.y = Math.cos(sy * 0.0005) * 1;
+  knot.scale.setScalar(1 + Math.sin(sy * 0.001) * 0.1);
   rdr.render(sc,cam);
 }
 
 // FIGURE SYSTEM
 const figureGroup = new THREE.Group();
 sc.add(figureGroup);
-let figureCount = 0;
 let currentStage = 'none';
 let musicPlaying = false;
 let audioCtx = null;
-let droneOsc = null;
-let droneGain = null;
+let droneGains = [];
 
 function toggleMusic() {
   if(!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const createOsc = (freq, type, vol) => {
+    const createOsc = (freq, type) => {
       const osc = audioCtx.createOscillator();
       const g = audioCtx.createGain();
       osc.type = type;
@@ -408,20 +410,15 @@ function toggleMusic() {
       osc.start();
       return g;
     };
-    droneGain = createOsc(55, 'sine', 0.02);
-    droneGain2 = createOsc(110.5, 'sine', 0.015);
-    droneGain3 = createOsc(165, 'sine', 0.01);
-    // Added metallic shimmer
-    droneGain4 = createOsc(880, 'sine', 0.002); 
+    droneGains = [createOsc(55, 'sine'), createOsc(110.5, 'sine'), createOsc(165, 'sine'), createOsc(880, 'sine')];
   }
-  
   const fade = (g, v) => g.gain.setTargetAtTime(v, audioCtx.currentTime, 1.5);
   if(musicPlaying) { 
-    [droneGain, droneGain2, droneGain3, droneGain4].forEach(g => fade(g, 0));
+    droneGains.forEach(g => fade(g, 0));
     document.getElementById('music-state').innerText='OFF'; 
   } else { 
     audioCtx.resume();
-    fade(droneGain, 0.03); fade(droneGain2, 0.02); fade(droneGain3, 0.01); fade(droneGain4, 0.005);
+    droneGains.forEach((g,i) => fade(g, [0.03, 0.02, 0.01, 0.005][i]));
     document.getElementById('music-state').innerText='ON'; 
   }
   musicPlaying = !musicPlaying;
@@ -429,8 +426,7 @@ function toggleMusic() {
 
 function playClick() {
   if(!audioCtx) return;
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
   o.type = 'triangle';
   o.frequency.setValueAtTime(1200, audioCtx.currentTime);
   o.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
@@ -439,146 +435,58 @@ function playClick() {
   o.connect(g); g.connect(audioCtx.destination);
   o.start(); o.stop(audioCtx.currentTime + 0.1);
 }
-document.addEventListener('click', (e) => { 
-  if(e.target.tagName === 'BUTTON' || e.target.closest('.nav-tag')) playClick();
-});
+document.addEventListener('click', (e) => { if(e.target.tagName === 'BUTTON' || e.target.closest('.nav-tag')) playClick(); });
 
 function createFigure(x, y, z, scale=1) {
   const g = new THREE.Group();
-  const mat = new THREE.LineBasicMaterial({ 
-    color: 0xffffff, transparent: true, opacity: 0.35 
-  });
-  
-  // Head
-  const headGeo = new THREE.CircleGeometry(0.18 * scale, 12);
-  const headEdge = new THREE.EdgesGeometry(headGeo);
+  const mat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 });
+  const headGeo = new THREE.CircleGeometry(0.18 * scale, 12), headEdge = new THREE.EdgesGeometry(headGeo);
   g.add(new THREE.LineSegments(headEdge, mat.clone()));
-  
-  // Body line
-  const bodyPts = [
-    new THREE.Vector3(0, -0.18*scale, 0),
-    new THREE.Vector3(0, -0.7*scale, 0)
-  ];
-  g.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(bodyPts), mat.clone()
-  ));
-  
-  // Arms
-  const armPts = [
-    new THREE.Vector3(-0.3*scale, -0.35*scale, 0),
-    new THREE.Vector3(0.3*scale, -0.35*scale, 0)
-  ];
-  g.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(armPts), mat.clone()
-  ));
-  
-  // Legs
+  const bodyPts = [new THREE.Vector3(0, -0.18*scale, 0), new THREE.Vector3(0, -0.7*scale, 0)];
+  g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(bodyPts), mat.clone()));
+  const armPts = [new THREE.Vector3(-0.3*scale, -0.35*scale, 0), new THREE.Vector3(0.3*scale, -0.35*scale, 0)];
+  g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(armPts), mat.clone()));
   [[-0.2, 0.2], [0.2, -0.2]].forEach(([lx, rx]) => {
-    const legPts = [
-      new THREE.Vector3(0, -0.7*scale, 0),
-      new THREE.Vector3(lx*scale, -1.1*scale, 0)
-    ];
-    g.add(new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(legPts), mat.clone()
-    ));
+    const legPts = [new THREE.Vector3(0, -0.7*scale, 0), new THREE.Vector3(lx*scale, -1.1*scale, 0)];
+    g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(legPts), mat.clone()));
   });
-  
   g.position.set(x, y, z);
-  g.userData.bobOffset = Math.random() * Math.PI * 2;
-  g.userData.baseY = y;
+  g.userData = { bobOffset: Math.random() * Math.PI * 2, baseY: y };
   return g;
 }
 
 function createMarketStall(x, y, z) {
   const g = new THREE.Group();
-  const mat = new THREE.LineBasicMaterial({ 
-    color: 0xffcc00, transparent: true, opacity: 0.3 
-  });
-  
-  // Stall base box
-  const boxGeo = new THREE.BoxGeometry(1.2, 0.8, 0.6);
-  const boxEdge = new THREE.EdgesGeometry(boxGeo);
+  const mat = new THREE.LineBasicMaterial({ color: 0xffcc00, transparent: true, opacity: 0.3 });
+  const boxGeo = new THREE.BoxGeometry(1.2, 0.8, 0.6), boxEdge = new THREE.EdgesGeometry(boxGeo);
   g.add(new THREE.LineSegments(boxEdge, mat.clone()));
-  
-  // Roof lines
-  const roofPts = [
-    new THREE.Vector3(-0.8, 0.6, 0.4),
-    new THREE.Vector3(0, 0.9, 0),
-    new THREE.Vector3(0.8, 0.6, 0.4)
-  ];
-  g.add(new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(roofPts), mat.clone()
-  ));
-  
+  const roofPts = [new THREE.Vector3(-0.8, 0.6, 0.4), new THREE.Vector3(0, 0.9, 0), new THREE.Vector3(0.8, 0.6, 0.4)];
+  g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(roofPts), mat.clone()));
   g.position.set(x, y, z);
-  g.userData.bobOffset = Math.random() * Math.PI * 2;
-  g.userData.baseY = y;
+  g.userData = { bobOffset: Math.random() * Math.PI * 2, baseY: y };
   return g;
 }
 
 function setFigureStage(stage) {
   if(stage === currentStage) return;
   currentStage = stage;
-  
-  // Fade out all existing
   figureGroup.children.forEach(c => {
-    gsap.to(c.children.map(m=>m.material), {
-      opacity: 0, duration: 0.8,
-      onComplete: () => { figureGroup.remove(c); }
-    });
+    gsap.to(c.children.map(m=>m.material), { opacity: 0, duration: 0.8, onComplete: () => { figureGroup.remove(c); } });
   });
-  
   setTimeout(() => {
     figureGroup.clear();
-    
-    if(stage === 'one') {
-      // 1 centered figure
-      figureGroup.add(createFigure(0, 0.5, 0, 1.8));
-      
-    } else if(stage === 'ten') {
-      // 10 figures in a loose grid
-      for(let i=0; i<10; i++) {
-        const x = (i % 5 - 2) * 1.2;
-        const y = Math.floor(i / 5) * 1.5 - 0.5;
-        figureGroup.add(createFigure(x, y, 0, 0.9));
-      }
-      
-    } else if(stage === 'hundred') {
-      // 100 very small figures
-      for(let i=0; i<100; i++) {
-        const x = (i % 10 - 4.5) * 0.8;
-        const y = Math.floor(i / 10) * 0.9 - 3.5;
-        figureGroup.add(createFigure(x, y, 0, 0.28));
-      }
-      
-    } else if(stage === 'market') {
-      // Market stalls replacing figures
-      for(let i=0; i<8; i++) {
-        const x = (i % 4 - 1.5) * 2.5;
-        const y = Math.floor(i / 4) * 2 - 0.8;
-        figureGroup.add(createMarketStall(x, y, 0));
-      }
-      
-    } else if(stage === 'intersection') {
-      // Figures on left, stalls on right
-      for(let i=0; i<5; i++) {
-        figureGroup.add(createFigure(-3 + i*0.4, (i%3)*0.9 - 0.5, 0, 0.5));
-      }
-      for(let i=0; i<4; i++) {
-        figureGroup.add(createMarketStall(2 + (i%2)*2, Math.floor(i/2)*1.8 - 0.5, 0));
-      }
+    if(stage === 'one') figureGroup.add(createFigure(0, 0.5, 0, 1.8));
+    else if(stage === 'ten') { for(let i=0; i<10; i++) figureGroup.add(createFigure((i%5-2)*1.2, Math.floor(i/5)*1.5-0.5, 0, 0.9)); }
+    else if(stage === 'hundred') { for(let i=0; i<100; i++) figureGroup.add(createFigure((i%10-4.5)*0.8, Math.floor(i/10)*0.9-3.5, 0, 0.28)); }
+    else if(stage === 'market') { for(let i=0; i<8; i++) figureGroup.add(createMarketStall((i%4-1.5)*2.5, Math.floor(i/4)*2-0.8, 0)); }
+    else if(stage === 'intersection') {
+      for(let i=0; i<5; i++) figureGroup.add(createFigure(-3 + i*0.4, (i%3)*0.9 - 0.5, 0, 0.5));
+      for(let i=0; i<4; i++) figureGroup.add(createMarketStall(2 + (i%2)*2, Math.floor(i/2)*1.8 - 0.5, 0));
     }
-    
-    // Fade in new figures
     figureGroup.children.forEach((c, idx) => {
       c.children.forEach(mesh => { mesh.material.opacity = 0; });
-      setTimeout(() => {
-        c.children.forEach(mesh => {
-          gsap.to(mesh.material, { opacity: 0.35, duration: 1 });
-        });
-      }, idx * 40);
+      setTimeout(() => { c.children.forEach(mesh => { gsap.to(mesh.material, { opacity: 0.35, duration: 1 }); }); }, idx * 40);
     });
-    
   }, 900);
 }
 anim();
@@ -588,9 +496,7 @@ document.getElementById('analyze-btn').onclick=async()=>{
   const val=document.getElementById('user-input').value.trim();
   if(!val) return;
   document.getElementById('status-wrap').style.display='flex';
-  
   let p=0; const intv=setInterval(()=>{p+=Math.random()*15; document.getElementById('sbar-inner').style.width=Math.min(p,95)+'%';},300);
-
   try {
     const res=await fetch('http://localhost:5010/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
     const data=await res.json();
@@ -600,576 +506,176 @@ document.getElementById('analyze-btn').onclick=async()=>{
       gsap.to('#screen-input', {opacity:0, duration:1, onComplete:()=>{
         document.getElementById('screen-input').style.display='none';
         document.getElementById('screen-loading-dossier').style.display='flex';
-        gsap.fromTo('#screen-loading-dossier',
-          { opacity: 0 },
-          { opacity: 1, duration: 1.2, ease: "power2.out" }
-        );
-        setTimeout(()=>document.getElementById('explore-trigger').style.display='block', 1500);
+        gsap.fromTo('#screen-loading-dossier', { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power2.out" });
+        setTimeout(()=>{
+          const btn = document.getElementById('explore-trigger');
+          btn.style.display = 'block';
+          gsap.fromTo(btn, { opacity: 0 }, { opacity: 1, duration: 1.5 });
+        }, 1500);
       }});
       populate(data);
-      window._stcData = data;
     }, 1000);
   } catch(e) { alert("ERROR CONNECTING TO STC ENGINE"); }
 };
 
 function startDossier() {
   window.scrollTo(0,0);
-  gsap.fromTo('#scroll-stc', { opacity: 0, visibility: 'visible' }, { opacity: 0.05, duration: 2 });
+  document.body.style.overflowY = 'auto';
+  document.documentElement.style.overflowY = 'auto';
+  
   gsap.to('#screen-loading-dossier', {opacity:0, duration:0.6, onComplete:()=>{
     document.getElementById('screen-loading-dossier').style.display='none';
-    document.getElementById('output-container').style.display='block';
-    ScrollTrigger.refresh();
+    const container = document.getElementById('output-container');
+    container.style.display = 'block';
     
+    // Forced scroll activation
+    ScrollTrigger.refresh();
     setTimeout(() => {
       ScrollTrigger.refresh();
+      window.scrollTo(0, 1); // Tiny bump to trigger ScrollTrigger
       
-      // STC ZOOM
-      gsap.to('#scroll-stc', {
-        scale: 4,
-        opacity: 0.08,
-        scrollTrigger: {
-          trigger: '#slides-wrapper',
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1.5
-        }
-      });
-
-      const sections = document.querySelectorAll('#slides-wrapper section');
-      sections.forEach((sec, i) => {
-        // Interstitials fade
-        if(sec.classList.contains('interstitial')) {
-          gsap.to(sec, {
-            scrollTrigger: { trigger: sec, start: 'top 80%', toggleActions: 'play none none reverse' },
-            opacity: 1, duration: 1.5
-          });
-        }
-
-        // Title Slide Left
-        const title = sec.querySelector('.slide-title h1');
-        if(title) {
-          gsap.from(title, {
-            scrollTrigger: { trigger: sec, start: 'top 80%' },
-            x: -100, opacity: 0, duration: 1.2, ease: 'power3.out'
-          });
-        }
-
-        ScrollTrigger.create({
-          trigger: sec,
-          start: 'top 65%',
-          onEnter: () => {
-            if(i === 1) setFigureStage('one');
-            else if(i === 2) setFigureStage('one');
-            else if(i === 3) setFigureStage('ten');
-            else if(i === 4) setFigureStage('hundred');
-            else if(i === 5) setFigureStage('market');
-            else if(i === 6) setFigureStage('market');
-            else if(i === 7) setFigureStage('intersection');
-            else if(i === 8) setFigureStage('intersection');
-            else if(i === 9) setFigureStage('intersection');
-          }
+      document.querySelectorAll('section').forEach(sec => {
+        ScrollTrigger.create({ 
+          trigger: sec, 
+          start: 'top 65%', 
+          onEnter: () => { if(sec.dataset.figureStage) setFigureStage(sec.dataset.figureStage); } 
         });
       });
     }, 1200);
   }});
 }
 
-function nextSlide(el) {
-  const current = el.closest('section');
-  const all = document.querySelectorAll('#output-container section');
-  let next = null;
-  for(let i=0; i<all.length; i++){
-    if(all[i]===current && all[i+1]){ next=all[i+1]; break; }
+function populate(data) {
+  if(!data || !data.slides) return;
+  window._stcData = data;
+  const container = document.getElementById('slides-wrapper');
+  container.innerHTML = '';
+  const timestamp = new Date().toLocaleString();
+
+  container.appendChild(createInter("Let's hear what a person in your market is saying.", true));
+  
+  const highlightStats = (text) => text.replace(/(\d+[\d,.]*%?|\b\d+\b)/g, '<span class="stat-highlight">$1</span>');
+
+  const createDataSlide = (idx, s, stage) => {
+    const slide = document.createElement('section');
+    slide.className = 'slide';
+    slide.dataset.figureStage = stage;
+    slide.innerHTML = `
+      <div class="split-layout">
+        <div class="visual-side">
+          <div style="font-family:var(--font-mono); font-size:10px; position:absolute; bottom:20px; right:20px; opacity:0.1; letter-spacing:5px;">VISUAL_MODEL_V6.0</div>
+        </div>
+        <div class="content-side">
+          <div class="slide-num">SIGNAL_0${idx}</div>
+          <div class="slide-title"><h1>${s.title}</h1></div>
+          <div class="corner-grid">
+            ${s.paragraphs.map(p => `<div class="corner-box"><div class="p-body">${highlightStats(p)}</div></div>`).join('')}
+          </div>
+          <div class="slide-meta">SOURCE: ${s.source || 'MODEL_INFERENCE_LAYER'} // TIMESTAMP: ${timestamp}</div>
+        </div>
+      </div>
+    `;
+    return slide;
+  };
+
+  const stages = ['one', 'one', 'one', 'ten', 'hundred', 'market', 'intersection', 'intersection', 'intersection'];
+  data.slides.forEach((s, i) => {
+    if(i === 3) container.appendChild(createInter("Mapping the market they're inside."));
+    if(i === 6) container.appendChild(createInter("Where signals collide."));
+    container.appendChild(createDataSlide(i+1, s, stages[i]));
+  });
+
+  if(data.pdf_metadata && data.pdf_metadata.final_bold_statement) {
+    const verdict = document.createElement('section');
+    verdict.className = 'interstitial';
+    verdict.style.opacity = '1';
+    verdict.innerHTML = `
+      <div style="font-family:var(--font-mono); font-size:10px; letter-spacing:10px; opacity:0.3; margin-bottom:40px;">[STRATEGIC_VERDICT]</div>
+      <div class="inter-text" style="font-size:clamp(20px, 4vw, 36px); color:#fff; max-width:900px; text-transform:none; line-height:1.5; font-weight:300;">${data.pdf_metadata.final_bold_statement}</div>
+      <button id="download-btn" onclick="generatePDF()">DOWNLOAD_AUDIT_REPORT</button>
+    `;
+    container.appendChild(verdict);
   }
-  if(!next) return;
-  gsap.to(current, { opacity:0, y:-40, duration:0.5, ease:'power2.in' });
+
   setTimeout(() => {
-    gsap.to(window, {
-      scrollTo: { y: next, autoKill: false },
-      duration: 1.0,
-      ease: 'expo.inOut'
+    ScrollTrigger.refresh();
+    gsap.utils.toArray('.p-body').forEach(p => {
+      gsap.to(p, { scrollTrigger: { trigger: p, start: 'top 90%' }, opacity: 1, y: 0, duration: 1.2 });
     });
-    gsap.fromTo(next,
-      { opacity:0, y:40 },
-      { opacity:1, y:0, duration:0.7, ease:'power3.out', delay:0.3 }
-    );
-  }, 400);
+  }, 1000);
 }
 
-// ADMIN
+function createInter(txt, hasButton = false) {
+  const sec = document.createElement('section');
+  sec.className = 'interstitial';
+  sec.innerHTML = `
+    <div class="inter-text" style="font-weight:300; opacity:0.8; position:relative; z-index:100; letter-spacing:-2px; margin-bottom:40px;">${txt}</div>
+    ${hasButton ? `<button class="welcome-btn" style="opacity:0; transform:translateY(20px);" id="inter-btn">[SURE]</button>` : ''}
+  `;
+  gsap.to(sec, { scrollTrigger: { trigger: sec, start: 'top 80%', markers: false }, opacity: 1, duration: 1.5 });
+  
+  if(hasButton) {
+    setTimeout(() => {
+      const btn = sec.querySelector('#inter-btn');
+      gsap.to(btn, { opacity: 1, y: 0, duration: 1.5, delay: 0.8 });
+      btn.onclick = () => {
+        const nextSec = sec.nextElementSibling;
+        if(nextSec) gsap.to(window, { duration: 1, scrollTo: nextSec, ease: "power2.inOut" });
+      };
+    }, 100);
+  }
+  return sec;
+}
+
 async function showAdmin() {
   const overlay = document.getElementById('admin-overlay');
   overlay.style.display = 'block';
   overlay.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:60px; padding:0 40px;">
-      <h2 style="font-family:var(--font-heading); font-size:40px; font-weight:900;">[SYSTEM_LOG_AUDIT]</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:60px; padding:20px 40px;">
+      <h2 style="font-family:var(--font-heading); font-size:32px;">[SYSTEM_LOG_AUDIT]</h2>
       <button onclick="closeAdmin()" style="background:var(--gold); border:none; padding:10px 30px; font-weight:900; cursor:pointer;">CLOSE</button>
     </div>
-    <div id="admin-history-list" style="display:grid; gap:10px; padding:0 40px;">
-      <div style="display:grid; grid-template-columns: 1fr 200px 100px; padding:20px; border-bottom:2px solid var(--text); font-family:var(--font-mono); font-size:11px; opacity:0.5;">
-        <div>QUERY_INPUT</div>
-        <div>TIMESTAMP</div>
-        <div>TOKENS</div>
-      </div>
-    </div>
+    <div id="admin-history-list" style="padding:0 40px;"></div>
   `;
-
   const res = await fetch('/history');
   const history = await res.json();
   const list = document.getElementById('admin-history-list');
-  if (!history.length) {
-    list.innerHTML += `<div style="padding:40px; text-align:center; font-family:var(--font-mono); font-size:12px; opacity:0.3;">NO RECORDS FOUND</div>`;
-    return;
-  }
   history.reverse().forEach(h => {
     const row = document.createElement('div');
-    row.style.cssText = 'display:grid; grid-template-columns: 1fr 200px 100px; padding:20px; border-bottom:1px solid rgba(255,255,255,0.05); font-family:var(--font-body); font-size:14px;';
-    row.innerHTML = `
-      <div style="color:var(--gold); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:20px;">${h.input}</div>
-      <div style="font-family:var(--font-mono); font-size:11px; opacity:0.6;">${h.timestamp}</div>
-      <div style="font-family:var(--font-mono); font-size:11px; color:var(--cobalt); text-align:right;">${h.tokens}</div>
-    `;
+    row.style.cssText = 'display:grid; grid-template-columns: 1fr 200px 100px; padding:20px; border-bottom:1px solid rgba(255,255,255,0.05);';
+    row.innerHTML = `<div>${h.input}</div><div style="opacity:0.6">${h.timestamp}</div><div style="color:var(--cobalt)">${h.tokens}</div>`;
     list.appendChild(row);
   });
 }
 function closeAdmin() { document.getElementById('admin-overlay').style.display='none'; }
 
-// CIPHER EFFECT
-function applyCipher(el) {
-  const original = el.innerText;
-  const chars = 'ABCDEFGHIJKLM-0123456789_*!<>[]';
-  let iter = 0;
-  const interval = setInterval(() => {
-    el.innerText = original.split('').map((c, i) => {
-      if(i < iter) return original[i];
-      return chars[Math.floor(Math.random() * chars.length)];
-    }).join('');
-    if(iter >= original.length) clearInterval(interval);
-    iter += original.length / 20;
-  }, 30);
-}
-// document.querySelectorAll('.loading-big, h1').forEach(h => applyCipher(h));
-
-function populate(data) {
-  if(!data || !data.slides) { console.error("INCOMPLETE DATA"); return; }
-  const container = document.getElementById('slides-wrapper');
-  container.innerHTML = '';
-  
-  const h=()=>Math.floor(Math.random()*360);
-  const getSubtleBg=(hue)=>`linear-gradient(135deg, hsl(${hue},20%,10%), #000)`;
-  const getContrastBg=(hue)=>`linear-gradient(135deg, hsl(${hue},40%,15%), hsl(${(hue+40)%360},40%,5%))`;
-
-  try {
-    // Interstitial 1
-    container.appendChild(createInter("Let's hear what a person in your market is saying about themselves.", true));
-    
-    // Slides 1-3 (Persona)
-    for(let i=0; i<3; i++) {
-      if(data.slides[i]) {
-        const s = data.slides[i];
-        const slideEl = createPersonaSlide(i+1, s.title, s.source, s.paragraphs);
-        if(Math.random() > 0.6) slideEl.style.background = getContrastBg(h());
-        container.appendChild(slideEl);
-      }
-    }
-
-    // Interstitial 2
-    container.appendChild(createInter("We've mapped the individual. Now let's understand the market they're inside.", false));
-
-    // Slides 4-6 (Market)
-    if(data.slides[3]) {
-      const s4 = createMarketSlide(4, data.slides[3].title, data.slides[3].source, data.slides[3].paragraphs);
-      if(Math.random()>0.7) s4.style.background = getContrastBg(h());
-      container.appendChild(s4);
-    }
-    if(data.slides[4]) container.appendChild(createMarketSlide(5, data.slides[4].title, data.slides[4].source, data.slides[4].paragraphs, [], true));
-    if(data.slides[5]) container.appendChild(createMarketSlide(6, data.slides[5].title, data.slides[5].source, data.slides[5].paragraphs, [], true));
-
-    // Interstitial 3
-    container.appendChild(createInter("Comparing both signals. Finding where they collide.", false));
-
-    // Slides 7-8 (Intersection)
-    for(let i=6; i<8; i++) {
-      if(data.slides[i]) {
-        const s = data.slides[i];
-        container.appendChild(createMarketSlide(i+1, s.title, s.source, s.paragraphs, s.elements, true));
-      }
-    }
-
-    // Slide 9 (Strategic Convergence)
-    if(data.slides[8]) {
-      const s9 = data.slides[8];
-      container.appendChild(createMarketSlide(9, s9.title, s9.source, s9.paragraphs, []));
-    }
-
-    // Slide 10 (Final Verdict)
-    if(data.pdf_metadata && data.pdf_metadata.final_bold_statement) {
-      const final = document.createElement('section');
-      final.className = 'interstitial';
-      final.style.background = 'var(--black)';
-      final.style.color = 'var(--gold)';
-      final.innerHTML = `
-        <div style="font-family:var(--font-mono); font-size:9px; letter-spacing:10px; opacity:0.3; margin-bottom:40px;">[FINAL_CORE_SYNTHESIS]</div>
-        <div class="inter-text" style="font-family:var(--font-body); font-size:clamp(24px, 4vw, 42px); line-height:1.4; font-weight:300; max-width:800px; text-transform:none; color:#fff;">${data.pdf_metadata.final_bold_statement}</div>
-        <div style="font-family:var(--font-mono); font-size:8px; color:rgba(255,255,255,0.1); margin:60px 0 40px;">DATA ANALYTICS SYNTHESIZED VIA STC ALGO NEURAL ENGINE V6.0 // AUDIT COMPLETE</div>
-        <button id="download-btn" onclick="generatePDF()" class="shake-hover" style="background:var(--gold); color:var(--black); border:none; padding:22px 60px; font-weight:900; font-size:16px;">GENERATE FINAL PDF</button>
-      `;
-      container.appendChild(final);
-    }
-  } catch(err) { console.error("POPULATE ERROR:", err); }
-
-  // Container Scroll Animations for Paragraphs
-  setTimeout(() => {
-    ScrollTrigger.refresh();
-    document.querySelectorAll('.corner-box').forEach(box => {
-      gsap.to(box.querySelector('.p-body'), {
-        scrollTrigger: { 
-          trigger: box, 
-          start: 'top 90%',
-          toggleActions: 'play none none reverse'
-        },
-        opacity: 1,
-        y: 0,
-        duration: 1.2,
-        ease: 'power2.out'
-      });
-    });
-  }, 1000);
-}
-
-function createInter(txt, hasBtn=false) {
-  const s = document.createElement('section');
-  s.className = 'interstitial';
-  s.style.cssText = 'background:#080808; border-bottom:1px solid rgba(255,255,255,0.06);';
-  const btnHtml = hasBtn
-    ? `<button class="welcome-btn" onclick="nextSlide(this)" 
-        style="margin-top:50px; border:1px solid rgba(255,204,0,0.4); 
-        color:var(--gold); background:transparent; font-family:var(--font-mono); 
-        font-size:10px; letter-spacing:5px; padding:14px 40px;">
-        LET'S GO →
-       </button>`
-    : '';
-  s.innerHTML = `
-    <div style="font-family:var(--font-mono); font-size:8px; letter-spacing:6px; 
-      color:rgba(255,255,255,0.2); margin-bottom:24px; text-transform:uppercase;">
-      STC ALGO — SYSTEM UPDATE
-    </div>
-    <div class="inter-text neon-flicker" style="font-size:clamp(28px,4vw,56px); 
-      font-weight:300; letter-spacing:-1px; line-height:1.15; 
-      max-width:700px; color:rgba(255,255,255,0.85);">
-      ${txt}
-    </div>
-    ${btnHtml}
-  `;
-  gsap.fromTo(s.querySelector('.inter-text'),
-    { opacity: 0 }, { opacity: 1, duration: 1.2, delay: 0.3 }
-  );
-  return s;
-}
-
-function createPersonaSlide(num, title, src, paras) {
-  const s = document.createElement('section'); s.className = 'slide';
-  const flickerClass = num <= 2 ? 'neon-flicker' : '';
-  const animId = 'live-persona-' + num;
-  s.innerHTML = `
-    <div class="slide-title">
-      <div class="slide-num">LOG_ENTRY_0${num}</div>
-      <div class="slide-tag" style="font-family:var(--font-mono); 
-        font-size:8px; letter-spacing:5px; background:transparent; 
-        border:none; color:rgba(255,204,0,0.6); padding:0; 
-        margin-bottom:8px;">${src}</div>
-      <h1 class="${flickerClass} glowing-header" style="font-family:var(--font-heading); font-size:clamp(36px,5vw,64px); 
-        font-weight:900; letter-spacing:-2px; 
-        line-height:0.9; color:var(--text);">${title}</h1>
-      <div style="font-family:var(--font-mono); font-size:7px; color:rgba(255,255,255,0.2); margin-top:10px; text-transform:uppercase;">
-        CREDITS: NEURAL_AUDIT_V6 / SIGNAL_VECTOR_${Math.floor(Math.random()*999)} / VERIFIED_FOOTPRINT
-      </div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr; min-height:500px; gap:0; padding:0 40px 40px; position:relative;">
-       <div id="${animId}" style="position:absolute; inset:0; z-index:-1; opacity:0.6; display:flex; justify-content:center; align-items:center; background:radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 80%);"></div>
-       <div class="corner-grid" style="grid-template-columns: 1fr 1fr; grid-template-rows: auto; padding:0; height:100%; width:100%; gap:20px; z-index:10; position:relative;">
-          ${paras.map(p => `<div class="corner-box" style="background:rgba(0,0,0,0.4); backdrop-filter:blur(5px); border:none; border-left:2px solid rgba(255,204,0,0.3); padding:20px;"><div class="p-body">${p}</div></div>`).join('')}
-       </div>
-    </div>
-    <div style="padding:0 40px 40px; font-family:var(--font-mono); font-size:8px; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:2px;">
-      SIGNAL_SOURCE: ${src} — STC NEURAL VERIFICATION COMPLETE
-    </div>
-  `;
-  
-  setTimeout(() => {
-    const container = document.getElementById(animId);
-    if(!container) return;
-    const w=container.offsetWidth, h=container.offsetHeight;
-    const sce=new THREE.Scene(), cam=new THREE.PerspectiveCamera(45, w/h, 0.1, 100);
-    const rd=new THREE.WebGLRenderer({alpha:true, antialias:true});
-    rd.setSize(w,h); container.appendChild(rd.domElement);
-    cam.position.z=4;
-    
-    // Create a unique figure or knot for this slide
-    const knotGeo = new THREE.TorusKnotGeometry(0.8, 0.2, 100, 16);
-    const knotMat = new THREE.MeshBasicMaterial({color: 0xf3ff00, wireframe: true, transparent: true, opacity: 0.3});
-    const knot = new THREE.Mesh(knotGeo, knotMat);
-    sce.add(knot);
-    
-    function render() {
-      requestAnimationFrame(render);
-      knot.rotation.y += 0.02;
-      knot.rotation.x += 0.01;
-      rd.render(sce, cam);
-    }
-    render();
-  }, 100);
-  
-  return s;
-}
-
-function createMarketSlide(num, title, src, paras, items, isLive=false) {
-  const s = document.createElement('section'); s.className = 'slide';
-  const leftId = 'live-market-' + num;
-  s.innerHTML = `
-    <div class="slide-title">
-      <div class="slide-num">DATA_SECTOR_0${num}</div>
-      <div class="slide-tag" style="font-family:var(--font-mono); 
-        font-size:8px; letter-spacing:5px; background:transparent; 
-        border:none; color:rgba(255,204,0,0.6); padding:0; 
-        margin-bottom:8px;">${src}</div>
-      <h1 class="glowing-header" style="font-family:var(--font-heading); font-size:clamp(36px,5vw,64px); 
-        font-weight:900; letter-spacing:-2px; 
-        line-height:0.9; color:var(--text);">${title}</h1>
-      <div style="font-family:var(--font-mono); font-size:7px; color:rgba(255,204,0,0.4); margin-top:10px; text-transform:uppercase;">
-        CREDITS: NEURAL_AUDIT_V6 / MARKET_VECTOR_${Math.floor(Math.random()*999)} / VERIFIED_DATA_TRAIL
-      </div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; height:calc(100vh - 180px); gap:0; padding:0 40px 40px;">
-       ${isLive ? `
-         <div id="${leftId}" style="border-right:1px solid rgba(255,255,255,0.06); display:flex; justify-content:center; align-items:center;"></div>
-         <div style="display:flex; flex-direction:column; justify-content:center; padding-left:40px; gap:20px;">
-           ${paras.slice(0,3).map(p => `
-             <div class="p-body" style="opacity:1; transform:none; color:rgba(255,255,255,0.9);">${p}</div>
-           `).join('')}
-         </div>
-       ` : `
-         <div class="corner-grid" style="grid-column: span 2; padding:0; height:100%;">
-           ${paras.map(p => `<div class="corner-box"><div class="p-body">${p}</div></div>`).join('')}
-         </div>
-       `}
-    </div>
-  `;
-  
-  if(isLive) {
-    setTimeout(() => {
-      const container = document.getElementById(leftId);
-      if(!container) return;
-      const w=container.offsetWidth, h=container.offsetHeight;
-      const sce=new THREE.Scene(), cam=new THREE.PerspectiveCamera(45, w/h, 0.1, 100);
-      const rd=new THREE.WebGLRenderer({alpha:true, antialias:true});
-      rd.setSize(w,h); container.appendChild(rd.domElement);
-      cam.position.z=4;
-      
-      const stall = createMarketStall(0,0,0);
-      stall.scale.setScalar(2);
-      sce.add(stall);
-      
-      function render() {
-        requestAnimationFrame(render);
-        stall.rotation.y += 0.01;
-        stall.rotation.z += 0.005;
-        // Shine pulse
-        stall.children.forEach(c => {
-          if(c.material) c.material.opacity = 0.3 + Math.sin(Date.now()*0.002)*0.2;
-        });
-        rd.render(sce, cam);
-      }
-      render();
-    }, 100);
-  }
-  return s;
-}
-
-function createGraphSlide(num, title, src, paras, graphKey) {
-  const s = document.createElement('section');
-  s.className = 'slide';
-  s.style.background = '#080808';
-  const canvasId = 'graph-canvas-' + num;
-  s.innerHTML = `
-    <div class="slide-title">
-      <div style="font-family:var(--font-mono); font-size:8px; 
-        letter-spacing:5px; color:rgba(0,204,255,0.6); margin-bottom:8px;">
-        DATA_SECTOR_0${num}
-      </div>
-      <h1 style="font-family:var(--font-heading); font-size:clamp(36px,5vw,64px); 
-        font-weight:900; letter-spacing:-2px; color:var(--text); line-height:0.9;">
-        ${title}
-      </h1>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; 
-      height:calc(100vh - 180px); gap:0; padding:0 40px 40px;">
-      <div style="display:flex; flex-direction:column; justify-content:center; 
-        padding-right:40px; border-right:1px solid rgba(255,255,255,0.06);">
-        <canvas id="${canvasId}" width="500" height="320" 
-          style="width:100%; max-height:320px;"></canvas>
-        <div style="font-family:var(--font-mono); font-size:8px; 
-          letter-spacing:3px; color:rgba(255,255,255,0.2); margin-top:16px;">
-          ${src} — BEHAVIORAL DATA SIGNAL
-        </div>
-      </div>
-      <div style="display:flex; flex-direction:column; justify-content:center; 
-        padding-left:40px; gap:20px;">
-        ${paras.slice(0,2).map(p => `
-          <div class="p-body" style="opacity:1; transform:none; color:rgba(255,255,255,0.9);">${p}</div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-
-  // Draw graph after DOM insertion
-  setTimeout(() => {
-    const canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width, h = canvas.height;
-    
-    // Background
-    ctx.fillStyle = '#0a0a0a';
-    ctx.fillRect(0, 0, w, h);
-    
-    // Generate data from paragraphs text length as proxy signal
-    const rawData = paras.map((p, i) => ({
-      label: ['W1','W2','W3','W4','W5','W6'][i] || 'W'+(i+1),
-      value: 20 + (p.length % 60)
-    }));
-    
-    const maxVal = Math.max(...rawData.map(d=>d.value));
-    const pad = { top:20, right:20, bottom:40, left:40 };
-    const chartW = w - pad.left - pad.right;
-    const chartH = h - pad.top - pad.bottom;
-    const barW = chartW / rawData.length * 0.6;
-    const gap = chartW / rawData.length;
-
-    // Grid lines
-    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-    ctx.lineWidth = 1;
-    [0.25, 0.5, 0.75, 1].forEach(pct => {
-      const y = pad.top + chartH * (1 - pct);
-      ctx.beginPath();
-      ctx.moveTo(pad.left, y);
-      ctx.lineTo(pad.left + chartW, y);
-      ctx.stroke();
-    });
-
-    // Bars with animation
-    let scanLine = 0;
-    const animate = () => {
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = '#0a0a0a';
-      ctx.fillRect(0, 0, w, h);
-      
-      // Scanning line
-      scanLine = (scanLine + 2) % (h - pad.top - pad.bottom);
-      ctx.strokeStyle = 'rgba(255,204,0,0.15)';
-      ctx.beginPath();
-      ctx.moveTo(pad.left, pad.top + scanLine);
-      ctx.lineTo(w - pad.right, pad.top + scanLine);
-      ctx.stroke();
-
-      rawData.forEach((d, i) => {
-        const barH = (d.value / maxVal) * chartH;
-        const x = pad.left + i * gap + (gap - barW) / 2;
-        const y = pad.top + chartH - barH;
-        
-        const grad = ctx.createLinearGradient(0, y, 0, y + barH);
-        grad.addColorStop(0, 'rgba(255,204,0,0.9)');
-        grad.addColorStop(1, 'rgba(255,204,0,0.1)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(x, y, barW, barH);
-
-        // Buzzing label
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-        ctx.font = '10px DM Mono, monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(d.label, x + barW/2, h - 10);
-      });
-      requestAnimationFrame(animate);
-    };
-    animate();
-
-    // Axes
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(pad.left, pad.top);
-    ctx.lineTo(pad.left, pad.top + chartH);
-    ctx.lineTo(pad.left + chartW, pad.top + chartH);
-    ctx.stroke();
-    
-  }, 800);
-
-  return s;
-}
-
 function generatePDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4' });
-  const W = doc.internal.pageSize.getWidth();
-  const H = doc.internal.pageSize.getHeight();
-  const M = 20;
+  const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 20;
 
-  if (!window._stcData || !window._stcData.slides) {
-    alert('No data to export'); return;
-  }
+  if (!window._stcData) return;
 
-  const slides = window._stcData.slides;
-
-  slides.forEach((slide, i) => {
+  window._stcData.slides.forEach((slide, i) => {
     if (i > 0) doc.addPage();
-    doc.setFillColor(5,5,5);
-    doc.rect(0,0,W,H,'F');
-    doc.setDrawColor(40,40,40);
-    doc.setLineWidth(0.2);
-    doc.line(M,M,W-M,M);
-    doc.line(M,H-M,W-M,H-M);
-    doc.setFont('courier','normal');
-    doc.setFontSize(6);
-    doc.setTextColor(80,80,80);
-    doc.text('STC ALGO V6.0 — BEHAVIORAL INTELLIGENCE', M, M-4);
-    doc.text(slide.source, W-M, M-4, {align:'right'});
-    doc.setFont('courier','bold');
-    doc.setFontSize(18);
-    doc.setTextColor(255,204,0);
-    const titleLines = doc.splitTextToSize(slide.title.toUpperCase(), W - M*2);
-    doc.text(titleLines, M, M+16);
-    
-    doc.setFontSize(6);
-    doc.setTextColor(100,100,100);
-    doc.text(`VERIFIED_DATA_CREDITS: NEURAL_AUDIT_V6 / SIGNAL_VECTOR_${Math.floor(Math.random()*999)}`, M, M+16 + (titleLines.length * 6) + 2);
-    
-    doc.setFont('courier','normal');
-    doc.setFontSize(9);
-    doc.setTextColor(160,156,148);
-    let y = M + 20 + (titleLines.length * 6);
-    (slide.paragraphs||[]).forEach(p => {
+    doc.setFillColor(10,10,10); doc.rect(0,0,W,H,'F');
+    doc.setFont('courier','bold'); doc.setFontSize(18); doc.setTextColor(255,204,0);
+    doc.text(doc.splitTextToSize(slide.title.toUpperCase(), W - M*2), M, M+20);
+    doc.setFont('courier','normal'); doc.setFontSize(9); doc.setTextColor(200,200,200);
+    let y = M + 40;
+    slide.paragraphs.forEach(p => {
       const lines = doc.splitTextToSize(p, W-M*2);
       doc.text(lines, M, y);
       y += lines.length * 5 + 8;
     });
   });
 
-  if (window._stcData.pdf_metadata && window._stcData.pdf_metadata.final_bold_statement) {
+  if (window._stcData.pdf_metadata.final_bold_statement) {
     doc.addPage();
-    doc.setFillColor(255,204,0);
-    doc.rect(0,0,W,H,'F');
-    doc.setFont('courier','bold');
-    doc.setFontSize(10);
-    doc.setTextColor(5,5,5);
-    doc.text('[FINAL STRATEGIC VERDICT]', M, M+10);
-    doc.setFontSize(24);
-    const vlines = doc.splitTextToSize(
-      window._stcData.pdf_metadata.final_bold_statement.toUpperCase(), 
-      W-M*2
-    );
-    doc.text(vlines, M, M+28);
+    doc.setFillColor(255,204,0); doc.rect(0,0,W,H,'F');
+    doc.setFont('courier','bold'); doc.setFontSize(24); doc.setTextColor(0,0,0);
+    doc.text(doc.splitTextToSize(window._stcData.pdf_metadata.final_bold_statement.toUpperCase(), W-M*2), M, M+40);
   }
-
   doc.save('STC-ALGO-V6-Dossier.pdf');
 }
 </script>

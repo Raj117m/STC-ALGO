@@ -35,49 +35,138 @@ def log_search(user_input, tokens):
 SYSTEM_PROMPT = """
 You are a visceral behavioral deconstruction engine.
 Return ONLY valid JSON. No preamble. No markdown fences.
-
 Return this exact structure:
 
 {
   "slides": [
     {
-      "title": "A UNIQUE, VISCERAL TITLE IN CAPS",
-      "source": "NARRATIVE_SOURCE",
-      "paragraphs": ["p1", "p2", "p3", "p4", "p5", "p6"]
+      "title": "A UNIQUE VISCERAL TITLE IN CAPS",
+      "source": "SPECIFIC_DATA_SOURCE_NAME",
+      "paragraphs": ["p1", "p2", "p3", "p4", "p5", "p6"],
+      "key_stats": ["Punchy 3-5 word stat", "Behavioral fact phrase", "Insight signal", "Core numeric marker"]
     }
   ],
   "pdf_metadata": {
-    "final_bold_statement": "One powerful, aggressive 15-20 word strategic verdict."
+    "final_bold_statement": "SYNTHESIZED_VERDICT"
   }
 }
 
 The slides array must have EXACTLY 9 slides in this order:
 
-Slide 1 - PERSONA_VOICE: Values declared by the subject.
-Slide 2 - PERSONA_VOICE: Hidden emotional hunger/fear.
-Slide 3 - PERSONA_VOICE: Concrete behavioral contradictions.
-Slide 4 - MARKET_STRUCTURE: Power dynamics and profit motives.
-Slide 5 - MARKET_STRUCTURE: Systemic failures and traps.
-Slide 6 - MARKET_STRUCTURE: Measured cycles and markers.
-Slide 7 - INTERSECTION_LOG: Points of maximum friction.
-Slide 8 - INTERSECTION_LOG: Non-obvious control mechanisms.
-Slide 9 - CONVERGENCE: The final tactical execution plan.
+Slide 1 - source: PERSONA_VOICE
+Title must name the specific person archetype from the input.
+Write entirely in first person as the target consumer speaking 
+out loud. Use I statements. Show their stated values, 
+self-image, and what they tell others. Include real justifications 
+and self-flattering logic. Statistics appear inside emotional 
+sentences like "I read that 67% of parents do this and honestly 
+that made me feel better about myself."
+6 paragraphs, 45-60 words each.
 
-RULES:
-- DO NOT USE PLACEHOLDER TITLES. Generate aggressive, relevant titles.
-- Every slide must have EXACTLY 6 paragraphs.
-- Each paragraph must be 45-60 words.
-- MANDATORY: Every paragraph must include at least one quantified behavioral statistic (e.g. "84% shift", "12s latency").
-- Use <span class='highlight'>...</span> for stats.
-- Return ONLY valid JSON. No preamble. No markdown.
-- ANTI-REPETITION RULE: Each slide must cover a completely distinct aspect with ZERO verbal or conceptual overlap.
-- SLIDE 1: Stated values and conscious preferences ONLY.
-- SLIDE 2: Hidden emotional hungers, fears, and subconscious anxieties ONLY.
-- SLIDE 3: Observable behavioral contradictions and hypocrisy ONLY.
-- SLIDES 4-6: Separate, non-overlapping market layers (Power -> Systems -> Cycles).
-- SLIDES 7-8: Distinct intersection angles (Friction vs. Invisible Control).
-- SLIDE 9: Deep strategic convergence. 
-- NO PHRASE or idea from one slide may appear in any other.
+Slide 2 - source: HIDDEN_SIGNAL  
+Title must name the fear or desire driving this person.
+Continue first person voice. Now expose what they never say out 
+loud — the anxiety, guilt, status hunger, and fear underneath 
+the stated values. These emotions must contradict slide 1 
+directly. Statistics here reflect uncomfortable truths they 
+know but suppress.
+6 paragraphs, 45-60 words each.
+
+Slide 3 - source: BEHAVIORAL_RECORD
+Title must name the specific contradiction being exposed.
+Switch to third person cold observation. Document exactly what 
+this person actually does versus what they said in slides 1 and 2. 
+Concrete purchase decisions, daily habits, and the gap between 
+intention and action. Statistics reflect actual behavior data.
+6 paragraphs, 45-60 words each.
+
+Slide 4 - source: POWER_DYNAMICS
+Title must name who holds power in this market.
+Cold structural analysis. Which players control pricing, 
+distribution, and attention. How incumbents maintain dominance. 
+What structural advantages exist that new entrants cannot easily 
+replicate. Statistics reflect market concentration and power.
+6 paragraphs, 45-60 words each.
+
+Slide 5 - source: SYSTEMIC_TRAPS
+Title must name the specific trap this market creates.
+Where the system fails the consumer. What promises the market 
+makes versus what it delivers. The feedback loops that keep 
+consumers stuck. The churn triggers and abandonment patterns.
+Statistics reflect failure rates and dissatisfaction data.
+6 paragraphs, 45-60 words each.
+
+Slide 6 - source: MARKET_CYCLES
+Title must name the specific cycle driving this market.
+Temporal patterns — seasonal spikes, novelty decay curves, 
+replacement cycles, and purchase frequency data. When money 
+moves and why. What triggers buying versus what triggers 
+abandonment. Statistics reflect timing and cycle data.
+6 paragraphs, 45-60 words each.
+
+Slide 7 - source: FRICTION_POINTS
+Title must name the exact friction killing conversion.
+Where the consumer and market collide. The specific moments 
+where intent breaks down into inaction. Setup friction, 
+cognitive load, price resistance, and trust gaps. 
+Statistics reflect drop-off and abandonment rates.
+6 paragraphs, 45-60 words each.
+
+Slide 8 - source: INVISIBLE_CONTROL
+Title must name the hidden mechanism controlling behavior.
+The non-obvious lever that competitors miss. Social signaling 
+dynamics, identity economics, guilt loops, and status mechanics 
+that actually drive decisions. The thing nobody admits controls 
+them but data proves it does.
+Statistics reflect the behavioral patterns proving this mechanism.
+6 paragraphs, 45-60 words each.
+
+Slide 9 - source: TACTICAL_CONVERGENCE
+Title must name the specific market opportunity revealed.
+Synthesize everything. What this analysis means for someone 
+trying to enter or serve this market. The specific gap between 
+what the market offers and what the person actually needs. 
+The asymmetric advantage available to a new entrant who 
+understands slides 1 through 8.
+6 paragraphs, 45-60 words each.
+
+HARD RULES:
+- Slides 1 and 2 must use first person I statements throughout
+- Slide 3 onwards uses third person only
+- Each slide must contain exactly 4 highlighted phrases total 
+  spread across the 6 paragraphs. Do not highlight only percentages. 
+  Highlight a mix of: one percentage or number, one behavioral 
+  pattern phrase of 4 to 7 words, one market insight phrase of 
+  4 to 6 words, and one psychological or cultural observation 
+  phrase. Wrap the entire meaningful phrase in the span tag not 
+  just the number. Example of good highlighting: 
+  <span class='highlight'>toys discarded within the first fortnight</span> 
+  or <span class='highlight'>guilt overrides rational purchasing logic</span> 
+  or <span class='highlight'>34% drop in sustained play duration</span>. 
+  Never highlight a standalone percentage with no context around it.
+- Each slide must include a "key_stats" array of exactly 4 items. 
+  Each item is a punchy 3 to 5 word phrase representing a core 
+  stat or behavioral fact from that slide. These will be displayed 
+  as sidebar bullets. Example: "75% toy abandonment rate" or 
+  "Screen wins every time" or "₹1200 monthly spend" or "Status drives purchase".
+  Vary the type of evidence used across paragraphs — use 
+  anecdotes, behavioral patterns, economic logic, and cultural 
+  observations alongside the two statistics. The narrative must 
+  flow across all 6 paragraphs of each slide as a continuous 
+  argument that builds from opening claim to final insight, 
+  not as 6 disconnected bullet points dressed as sentences.
+  Additionally across all 9 slides the overall narrative must 
+  feel like a single coherent story with a clear arc — slides 
+  1 and 2 establish the person, slide 3 reveals the contradiction, 
+  slides 4 through 6 build the market picture, slides 7 and 8 
+  find the pressure points, slide 9 delivers the verdict. 
+  Each slide must end with a sentence that creates a bridge 
+  toward what the next slide will reveal.
+- Zero repetition across slides — if a concept appeared in 
+  slide N it cannot appear in slide N+1 through 9
+- Titles must be specific to the input, never generic
+- final_bold_statement must be 15-20 words, aggressive, 
+  specific to the input, no instructional language
 """
 
 def parse_llm_json(content):
@@ -122,7 +211,7 @@ def analyze():
         return jsonify({"error": "No input provided"}), 400
     try:
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_input}
@@ -149,6 +238,24 @@ def analyze():
         total_tokens = usage.total_tokens if usage else int(len(user_input) * 1.3)
         log_search(user_input, total_tokens)
         
+        # Second-pass verdict validation/refinement if model echoes instructions
+        verdict = result.get("pdf_metadata", {}).get("final_bold_statement", "")
+        instruction_keywords = ["write", "generate", "powerful", "aggressive", "verdict", "strategic", "statement", "word"]
+        if any(kw in verdict.lower() for kw in instruction_keywords) and len(verdict.split()) < 10:
+            # Re-attempt verdict only if it looks like a placeholder
+            v_response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {"role": "system", "content": "You are a strategic business analyst. Generate a sharp, aggressive 15-20 word business verdict based on the provided analysis. OUTPUT ONLY THE VERDICT."},
+                    {"role": "user", "content": f"Context: {raw[:2000]}"}
+                ],
+                temperature=0.7,
+                max_tokens=100
+            )
+            refined_verdict = v_response.choices[0].message.content.strip().replace('"', '')
+            if "pdf_metadata" not in result: result["pdf_metadata"] = {}
+            result["pdf_metadata"]["final_bold_statement"] = refined_verdict
+
         return jsonify(result)
 
     except json.JSONDecodeError as e:
