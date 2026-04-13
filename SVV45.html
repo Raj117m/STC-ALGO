@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STC ALGO — BEHAVIORAL INTELLIGENCE</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;900&family=Syne:wght@400;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #000000;
+  --surface: #0a0a0a;
+  --border: rgba(255,255,255,0.15);
+  --text: #ffffff;
+  --gold: #f3ff00;
+  --cobalt: #00f0ff;
+  --pink: #ff00ff;
+  --acid: #00ff00;
+  --font-heading: 'Unbounded', cursive;
+  --font-body: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--black); color: var(--text); font-family: var(--font-body); overflow-x: hidden; scroll-behavior: smooth; }
+.bg-blooms { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; opacity: 0.3; filter: blur(100px); }
+.bloom { position: absolute; width: 60vw; height: 60vw; border-radius: 50%; opacity: 0.2; animation: drift 20s infinite alternate ease-in-out; }
+@keyframes drift { 0% { transform: translate(-20%, -20%) rotate(0deg); } 100% { transform: translate(20%, 20%) rotate(360deg); } }
+
+/* CANVAS & GLOW */
+#three-canvas { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:-2; pointer-events:none; }
+.bg-glow { position:fixed; width:60vw; height:60vw; border-radius:50%; filter:blur(120px); opacity:0.08; z-index:-3; pointer-events:none; animation: glowMove 20s infinite alternate; }
+#glow-1 { background:var(--cobalt); top:-10%; left:-10%; }
+#glow-2 { background:var(--gold); bottom:-10%; right:-10%; animation-delay: -10s; }
+@keyframes glowMove { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(25%, 25%) scale(1.3); } }
+@keyframes floatText {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* NAV */
+.nav-bar { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:20px 40px; z-index:1000; }
+.nav-logo { font-family: var(--font-heading); font-size: 20px; font-weight: 900; color: var(--text); letter-spacing: -1px; cursor: pointer; }
+.nav-tag { font-size:10px; letter-spacing:3px; color:var(--text); opacity:0.6; font-family:var(--font-mono); }
+
+/* WELCOME SCREEN */
+#screen-welcome { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; z-index:100; position:relative; overflow:hidden; }
+.hero-bg-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:var(--font-heading); font-size:clamp(120px,30vw,500px); color:rgba(255,255,255,0.02); letter-spacing:-15px; pointer-events:none; font-weight:900; z-index:-1; }
+.welcome-btn { background:var(--gold); border:none; color:var(--black); padding:24px 60px; font-family:var(--font-heading); font-size:16px; letter-spacing:2px; cursor:pointer; transition:0.3s; margin-top:40px; pointer-events:auto; font-weight:800; box-shadow: 8px 8px 0px var(--cobalt); }
+.welcome-btn:hover { transform:translate(-4px, -4px); box-shadow: 12px 12px 0px var(--pink); }
+.bottom-info { position:absolute; bottom:40px; right:40px; text-align:right; font-size:14px; color:var(--text); max-width:400px; line-height:1.2; font-weight:800; opacity:0; text-transform:uppercase; }
+
+/* NEON FLICKER */
+.neon-flicker { animation: flicker 4s linear infinite; }
+@keyframes flicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 1;
+    filter: brightness(1) drop-shadow(0 0 5px var(--gold));
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.4;
+    filter: brightness(0.7) drop-shadow(0 0 0px var(--gold));
+  }
+}
+h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing: -2px; }
+.shake-hover:hover { animation: jitter 0.1s infinite; }
+.glowing-header { text-shadow: 0 0 10px rgba(255,204,0,0.6), 0 0 20px rgba(255,204,0,0.3); font-weight: 900 !important; }
+
+/* ADMIN PANEL */
+#admin-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:2000; display:none; padding:80px; overflow-y:auto; backdrop-filter:blur(20px); }
+.admin-card { border:1px solid var(--border); padding:20px; margin-bottom:10px; font-family:var(--font-mono); font-size:12px; }
+.admin-close { position:fixed; top:40px; right:40px; background:var(--gold); color:var(--black); padding:10px 20px; cursor:pointer; font-weight:800; }
+
+/* INPUT SCREEN */
+#screen-input { height:100vh; display:grid; grid-template-columns: 1fr 400px; padding:80px; z-index:10; position:relative; display:none; opacity:0; }
+.input-left { display:flex; flex-direction:column; justify-content:center; }
+.sbi-label { position:absolute; top:120px; left:80px; font-family:var(--font-heading); font-size:12px; letter-spacing:5px; color:var(--gold); text-transform:uppercase; z-index:20; }
+#user-input { width:100%; background:transparent; border:none; border-bottom:2px solid var(--text); color:var(--text); font-size:42px; padding:20px 0; outline:none; font-family:var(--font-heading); font-weight:800; resize:none; }
+#analyze-btn {
+  margin-top: 50px;
+  background: transparent;
+  border: 1px solid rgba(255,204,0,0.5);
+  color: var(--gold);
+  padding: 18px 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+#analyze-btn:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+#status-wrap { margin-top:40px; display:none; flex-direction:column; gap:10px; max-width:400px; }
+#status-text { font-family:var(--font-mono); font-size:11px; color:var(--cobalt); letter-spacing:4px; font-weight:700; }
+.sbar { width:100%; height:1px; background:rgba(255,255,255,0.1); }
+.sbar-inner { height:100%; width:0%; background:var(--cobalt); transition: width .5s; }
+
+/* LOADING DOSSIER SCREEN */
+#screen-loading-dossier { height:100vh; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center; z-index:500; position:fixed; inset:0; background:var(--black); }
+.loading-big { font-family:var(--font-heading); font-size:100px; font-weight:900; letter-spacing:-8px; margin-bottom:20px; text-transform:uppercase; line-height:0.9; animation: subtlePulse 3s ease-in-out infinite; }
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; letter-spacing: -8px; }
+  50% { opacity: 0.7; letter-spacing: -6px; }
+}
+
+.uplink-bar { width:300px; height:2px; background:rgba(255,255,255,0.05); margin-top:30px; position:relative; overflow:hidden; display:none; }
+.uplink-bar-inner { position:absolute; left:0; top:0; height:100%; width:0%; background:var(--gold); }
+.explore-trigger { display:none; margin-top:20px; }
+
+/* OUTPUT INTERSTITIALS */
+.interstitial { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:10%; position:relative; z-index:50; background:var(--black); }
+.inter-text { font-family:var(--font-heading); font-size:clamp(40px, 6vw, 100px); font-weight:800; line-height:0.9; text-transform:uppercase; letter-spacing:-3px; }
+
+/* SLIDE LAYOUTS */
+#output-container { display:none; min-height:100vh; position:relative; }
+.slide {
+  min-height: 100vh;
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+}
+.slide:nth-child(odd)  { background: #080808; }
+.slide:nth-child(even) { background: #0b0b0b; }
+.slide:nth-child(1) { border-left: 2px solid rgba(255,204,0,0.5); }
+.slide:nth-child(2) { border-left: 2px solid rgba(255,204,0,0.25); }
+.slide:nth-child(3) { border-left: 2px solid rgba(255,255,255,0.15); }
+.slide:nth-child(4) { border-left: 2px solid rgba(0,204,255,0.4); }
+.slide:nth-child(5) { border-left: 2px solid rgba(0,204,255,0.2); }
+.slide:nth-child(6) { border-left: 2px solid rgba(255,255,255,0.1); }
+
+.slide-title {
+  position: relative;
+  top: auto;
+  left: auto;
+  z-index: 40;
+  padding: 40px 40px 20px 40px;
+  text-align: left;
+  background: transparent;
+}
+.slide-title h1 { font-family:var(--font-heading); font-size: clamp(40px, 6vw, 80px); letter-spacing: -4px; line-height: 0.8; font-weight:900; text-transform:uppercase; margin-bottom:10px; color:inherit; text-shadow: 4px 4px 0px rgba(0,0,0,0.2); }
+.slide-tag { font-family:var(--font-mono); font-size:12px; letter-spacing:1px; color:var(--text); font-weight:800; background:var(--black); padding:5px 15px; text-transform:uppercase; }
+
+.slide-num {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+/* PERSONA CORNER LAYOUT */
+.corner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  padding: 0 40px 40px 40px;
+  gap: 16px;
+  z-index: 15;
+  height: calc(100vh - 180px);
+}
+.corner-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0 0 0 28px;
+  background: transparent;
+  border-left: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+.p-body {
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.9);
+  font-weight: 400;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: none;
+  overflow: hidden;
+}
+.highlight { color: var(--gold); font-weight: 900; text-shadow: 0 0 10px var(--gold); }
+#scroll-stc { 
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+  font-family: var(--font-heading); font-size: 40vw; font-weight: 900; 
+  color: rgba(255,255,255,0.02); pointer-events: none; z-index: -3; 
+  opacity: 0; visibility: hidden;
+}
+
+/* MARKET LAYOUT */
+.market-grid { display:grid; grid-template-columns: 1fr 1fr; height:100vh; padding:100px; align-items:center; }
+.market-left { display:flex; justify-content:center; align-items:center; border-right:1px solid var(--border); height:100%; }
+.market-right { padding-left:100px; display:flex; flex-direction:column; justify-content:center; }
+
+.word { display:inline-block; margin-right:0.3em; }
+.highlight { color:var(--gold); font-weight:700; }
+
+#download-btn { background:var(--gold); color:var(--black); border:none; padding:22px 60px; font-family:var(--font-heading); font-size:16px; letter-spacing:5px; cursor:pointer; font-weight:800; margin-top:50px; }
+
+/* FIX INTERSTITIAL STRETCH */
+.interstitial { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12%; position:relative; z-index:50; background:var(--black); }
+
+</style>
+</head>
+<body>
+<audio id="bg-music" loop>
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_735c05d76d.mp3" type="audio/mpeg">
+</audio>
+
+<div class="bg-blooms">
+  <div class="bloom" style="top:-10%; left:-10%; background:var(--cobalt);"></div>
+  <div class="bloom" style="bottom:-10%; right:-10%; background:var(--pink); animation-delay:-5s;"></div>
+  <div class="bloom" style="top:50%; left:50%; background:var(--gold); animation-delay:-10s;"></div>
+</div>
+
+<div id="scroll-stc">STC</div>
+<div class="bg-glow" id="glow-1"></div>
+<div class="bg-glow" id="glow-2"></div>
+<canvas id="three-canvas"></canvas>
+
+<nav class="nav-bar">
+  <div class="nav-logo" onclick="goHome()">STC ALGO</div>
+  <div style="display:flex; gap:30px; align-items:center;">
+    <div class="nav-tag" style="cursor:pointer;" onclick="toggleMusic()">[MUSIC: <span id="music-state">OFF</span>]</div>
+    <div class="nav-tag" style="cursor:pointer;" onclick="showAdmin()">[ADMIN_ACCESS]</div>
+    <div class="nav-tag">V6.0 — BEHAVIORAL DECONSTRUCTION</div>
+  </div>
+</nav>
+
+<div id="admin-overlay">
+  <div class="admin-close" onclick="closeAdmin()">CLOSE</div>
+  <h1 style="font-family:var(--font-heading); margin-bottom:40px;">HISTORICAL_CORE_LOGS</h1>
+  <div id="admin-content"></div>
+</div>
+
+<section id="screen-welcome">
+  <div class="hero-bg-text">STC</div>
+  <div class="eyebrow glitch-text" style="margin-bottom:10px;">The Invisible Market Core</div>
+  <div class="glitch-text neon-flicker" style="font-family:var(--font-heading); font-size:120px; text-transform:uppercase; font-weight:900; letter-spacing:-10px; line-height:0.8; animation: floatText 6s ease-in-out infinite;">SEE THE <span style="color:var(--gold)">UNSEEN</span></div>
+  <button class="welcome-btn" onclick="enterApp()">EXPLORE THE MARKET ENVIRONMENT →</button>
+  <div class="bottom-info" id="bottom-info">Map the gap between what your market says and what it does. Enter a demographic. See the unseen.</div>
+</section>
+
+<section id="screen-input">
+  <div class="sbi-label">Strategic Behavioural Intelligence</div>
+  <div class="hero-bg-text" id="bg-char-count">000</div>
+  <div class="input-left">
+    <textarea id="user-input" placeholder="Define a demographic segment..." rows="1" oninput="updateCharCount(this)"></textarea>
+    <div><button id="analyze-btn">ANALYSE →</button></div>
+    <div id="status-wrap">
+      <div id="status-text">CALIBRATING NEURAL MODELS...</div>
+      <div class="sbar"><div class="sbar-inner" id="sbar-inner"></div></div>
+    </div>
+  </div>
+  <div style="display:flex; flex-direction:column; justify-content:center; border-left:1px solid var(--border); padding-left:60px;">
+    <div style="font-family:var(--font-mono); font-size:9px; 
+      letter-spacing:4px; color:rgba(255,255,255,0.3); 
+      margin-bottom:40px; text-transform:uppercase;">
+      HOW TO USE
+    </div>
+    <div style="font-size:13px; color:rgba(255,255,255,0.6); 
+      line-height:2.2; font-family:var(--font-body); font-weight:300;">
+      01 &nbsp; Tell us what market you are trying to enter.<br>
+      02 &nbsp; Mention where your demographic sits.<br>
+      03 &nbsp; Watch the system analyse the gap.
+    </div>
+  </div>
+</section>
+
+<div id="screen-loading-dossier">
+  <div class="loading-big" id="load-msg">SYNTHESIZING<br><span style="color:var(--gold)">DOSSIER</span></div>
+  <div id="loading-sub" style="font-family:var(--font-mono); font-size:10px; letter-spacing:10px; opacity:0.6; text-transform:uppercase;">Decoding Market Vectors...</div>
+  <div class="explore-trigger" id="explore-trigger">
+    <button class="welcome-btn" onclick="startDossier()">LET'S GO →</button>
+  </div>
+</div>
+
+<div id="output-container">
+  <div id="slides-wrapper"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+// APP FLOW
+window.onload = () => { gsap.to('#bottom-info', {opacity:1, y:-10, duration:1, delay:1}); };
+function goHome() { window.location.reload(); }
+
+function updateCharCount(el) {
+  document.getElementById('bg-char-count').textContent = el.value.length.toString().padStart(3,'0');
+}
+
+function enterApp() {
+  gsap.to('#screen-welcome', {
+    scale: 1.08,
+    opacity: 0,
+    duration: 1.0,
+    ease: "power2.inOut",
+    onComplete: () => {
+      document.getElementById('screen-welcome').style.display = 'none';
+      document.getElementById('screen-input').style.display = 'grid';
+      gsap.fromTo('#screen-input',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }
+      );
+    }
+  });
+}
+
+// 3D SCENE
+const sc=new THREE.Scene(), cam=new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,0.1,1000);
+const rdr=new THREE.WebGLRenderer({canvas:document.getElementById('three-canvas'),alpha:true,antialias:true});
+rdr.setSize(window.innerWidth,window.innerHeight); cam.position.z=5;
+const grid=new THREE.Mesh(new THREE.PlaneGeometry(30,30,20,20), new THREE.MeshBasicMaterial({color:0x222222,wireframe:true,transparent:true,opacity:0.1}));
+grid.rotation.x=Math.PI/2; grid.position.y=-4; sc.add(grid);
+const knotMat=new THREE.MeshPhysicalMaterial({color:0xffffff, metalness:0, roughness:0.05, transmission:1, thickness:5, ior:1.5, reflectivity:0.8, clearcoat:1, clearcoatRoughness:0.1, emissive:0xffffff, emissiveIntensity:0.02, transparent:true});
+const knot=new THREE.Mesh(new THREE.TorusKnotGeometry(1.6,0.5,300,48,3,4), knotMat); sc.add(knot);
+
+const texLoader = new THREE.TextureLoader();
+const personaTex = texLoader.load('/Users/rajdeepmalladeb/.gemini/antigravity/brain/ad4cc313-7472-4330-9237-4a0f1abfae80/persona_silhouette_subtle_1775994698310.png');
+const marketTex = texLoader.load('/Users/rajdeepmalladeb/.gemini/antigravity/brain/ad4cc313-7472-4330-9237-4a0f1abfae80/market_stall_abstract_3d_1776011364135.png');
+
+const personaPlane = new THREE.Mesh(new THREE.PlaneGeometry(5,5), new THREE.MeshBasicMaterial({map:personaTex, transparent:true, opacity:0}));
+personaPlane.position.z = -1; sc.add(personaPlane);
+
+const marketPlane = new THREE.Mesh(new THREE.PlaneGeometry(7,7), new THREE.MeshBasicMaterial({map:marketTex, transparent:true, opacity:0}));
+marketPlane.position.z = -1.5; marketPlane.position.x = -3; sc.add(marketPlane);
+
+function anim(){
+  requestAnimationFrame(anim);
+  knot.rotation.z+=0.002; knot.rotation.y+=0.004;
+  
+  // Bob figures
+  figureGroup.children.forEach(fig => {
+    if(fig.userData.baseY !== undefined) {
+      fig.position.y = fig.userData.baseY + 
+        Math.sin(Date.now()*0.001 + fig.userData.bobOffset) * 0.04;
+    }
+  });
+  
+  // Dynamic knot color based on scroll stage
+  const sy = window.scrollY, vh = window.innerHeight;
+  knot.position.x = Math.sin(sy * 0.002) * 2;
+  knot.position.y = Math.cos(sy * 0.001) * 1;
+  knot.scale.setScalar(1 + Math.sin(sy * 0.003) * 0.2);
+  
+  if(sy > vh*4) {
+    personaPlane.material.opacity = gsap.utils.clamp(0, 0.4, (sy-(vh*2))/vh);
+  }
+  if(sy > vh*6) {
+    marketPlane.material.opacity = gsap.utils.clamp(0, 0.4, (sy-(vh*4))/vh);
+    personaPlane.position.x = gsap.utils.interpolate(0, 3, (sy-vh*4)/(vh*3));
+  }
+  
+  rdr.render(sc,cam);
+}
+
+// FIGURE SYSTEM
+const figureGroup = new THREE.Group();
+sc.add(figureGroup);
+let figureCount = 0;
+let currentStage = 'none';
+let musicPlaying = false;
+function toggleMusic() {
+  const m = document.getElementById('bg-music');
+  if(musicPlaying) { m.pause(); document.getElementById('music-state').innerText='OFF'; }
+  else { m.play(); document.getElementById('music-state').innerText='ON'; }
+  musicPlaying = !musicPlaying;
+}
+
+function createFigure(x, y, z, scale=1) {
+  const g = new THREE.Group();
+  const mat = new THREE.LineBasicMaterial({ 
+    color: 0xffffff, transparent: true, opacity: 0.35 
+  });
+  
+  // Head
+  const headGeo = new THREE.CircleGeometry(0.18 * scale, 12);
+  const headEdge = new THREE.EdgesGeometry(headGeo);
+  g.add(new THREE.LineSegments(headEdge, mat.clone()));
+  
+  // Body line
+  const bodyPts = [
+    new THREE.Vector3(0, -0.18*scale, 0),
+    new THREE.Vector3(0, -0.7*scale, 0)
+  ];
+  g.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(bodyPts), mat.clone()
+  ));
+  
+  // Arms
+  const armPts = [
+    new THREE.Vector3(-0.3*scale, -0.35*scale, 0),
+    new THREE.Vector3(0.3*scale, -0.35*scale, 0)
+  ];
+  g.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(armPts), mat.clone()
+  ));
+  
+  // Legs
+  [[-0.2, 0.2], [0.2, -0.2]].forEach(([lx, rx]) => {
+    const legPts = [
+      new THREE.Vector3(0, -0.7*scale, 0),
+      new THREE.Vector3(lx*scale, -1.1*scale, 0)
+    ];
+    g.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(legPts), mat.clone()
+    ));
+  });
+  
+  g.position.set(x, y, z);
+  g.userData.bobOffset = Math.random() * Math.PI * 2;
+  g.userData.baseY = y;
+  return g;
+}
+
+function createMarketStall(x, y, z) {
+  const g = new THREE.Group();
+  const mat = new THREE.LineBasicMaterial({ 
+    color: 0xffcc00, transparent: true, opacity: 0.3 
+  });
+  
+  // Stall base box
+  const boxGeo = new THREE.BoxGeometry(1.2, 0.8, 0.6);
+  const boxEdge = new THREE.EdgesGeometry(boxGeo);
+  g.add(new THREE.LineSegments(boxEdge, mat.clone()));
+  
+  // Roof lines
+  const roofPts = [
+    new THREE.Vector3(-0.8, 0.6, 0.4),
+    new THREE.Vector3(0, 0.9, 0),
+    new THREE.Vector3(0.8, 0.6, 0.4)
+  ];
+  g.add(new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(roofPts), mat.clone()
+  ));
+  
+  g.position.set(x, y, z);
+  g.userData.bobOffset = Math.random() * Math.PI * 2;
+  g.userData.baseY = y;
+  return g;
+}
+
+function setFigureStage(stage) {
+  if(stage === currentStage) return;
+  currentStage = stage;
+  
+  // Fade out all existing
+  figureGroup.children.forEach(c => {
+    gsap.to(c.children.map(m=>m.material), {
+      opacity: 0, duration: 0.8,
+      onComplete: () => { figureGroup.remove(c); }
+    });
+  });
+  
+  setTimeout(() => {
+    figureGroup.clear();
+    
+    if(stage === 'one') {
+      // 1 centered figure
+      figureGroup.add(createFigure(0, 0.5, 0, 1.8));
+      
+    } else if(stage === 'ten') {
+      // 10 figures in a loose grid
+      for(let i=0; i<10; i++) {
+        const x = (i % 5 - 2) * 1.2;
+        const y = Math.floor(i / 5) * 1.5 - 0.5;
+        figureGroup.add(createFigure(x, y, 0, 0.9));
+      }
+      
+    } else if(stage === 'hundred') {
+      // 100 very small figures
+      for(let i=0; i<100; i++) {
+        const x = (i % 10 - 4.5) * 0.8;
+        const y = Math.floor(i / 10) * 0.9 - 3.5;
+        figureGroup.add(createFigure(x, y, 0, 0.28));
+      }
+      
+    } else if(stage === 'market') {
+      // Market stalls replacing figures
+      for(let i=0; i<8; i++) {
+        const x = (i % 4 - 1.5) * 2.5;
+        const y = Math.floor(i / 4) * 2 - 0.8;
+        figureGroup.add(createMarketStall(x, y, 0));
+      }
+      
+    } else if(stage === 'intersection') {
+      // Figures on left, stalls on right
+      for(let i=0; i<5; i++) {
+        figureGroup.add(createFigure(-3 + i*0.4, (i%3)*0.9 - 0.5, 0, 0.5));
+      }
+      for(let i=0; i<4; i++) {
+        figureGroup.add(createMarketStall(2 + (i%2)*2, Math.floor(i/2)*1.8 - 0.5, 0));
+      }
+    }
+    
+    // Fade in new figures
+    figureGroup.children.forEach((c, idx) => {
+      c.children.forEach(mesh => { mesh.material.opacity = 0; });
+      setTimeout(() => {
+        c.children.forEach(mesh => {
+          gsap.to(mesh.material, { opacity: 0.35, duration: 1 });
+        });
+      }, idx * 40);
+    });
+    
+  }, 900);
+}
+anim();
+
+// ANALYZE
+document.getElementById('analyze-btn').onclick=async()=>{
+  const val=document.getElementById('user-input').value.trim();
+  if(!val) return;
+  document.getElementById('status-wrap').style.display='flex';
+  
+  let p=0; const intv=setInterval(()=>{p+=Math.random()*15; document.getElementById('sbar-inner').style.width=Math.min(p,95)+'%';},300);
+
+  try {
+    const res=await fetch('http://localhost:5010/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
+    const data=await res.json();
+    clearInterval(intv); document.getElementById('sbar-inner').style.width='100%';
+    document.getElementById('status-text').textContent='CONVERGENCE COMPLETE.';
+    setTimeout(()=>{
+      gsap.to('#screen-input', {opacity:0, duration:1, onComplete:()=>{
+        document.getElementById('screen-input').style.display='none';
+        document.getElementById('screen-loading-dossier').style.display='flex';
+        gsap.fromTo('#screen-loading-dossier',
+          { opacity: 0 },
+          { opacity: 1, duration: 1.2, ease: "power2.out" }
+        );
+        setTimeout(()=>document.getElementById('explore-trigger').style.display='block', 1500);
+      }});
+      populate(data);
+      window._stcData = data;
+    }, 1000);
+  } catch(e) { alert("ERROR CONNECTING TO STC ENGINE"); }
+};
+
+function startDossier() {
+  window.scrollTo(0,0);
+  gsap.fromTo('#scroll-stc', { opacity: 0, visibility: 'visible' }, { opacity: 0.05, duration: 2 });
+  gsap.to('#screen-loading-dossier', {opacity:0, duration:0.6, onComplete:()=>{
+    document.getElementById('screen-loading-dossier').style.display='none';
+    document.getElementById('output-container').style.display='block';
+    ScrollTrigger.refresh();
+    
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+      
+      // STC ZOOM
+      gsap.to('#scroll-stc', {
+        scale: 4,
+        opacity: 0.08,
+        scrollTrigger: {
+          trigger: '#slides-wrapper',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1.5
+        }
+      });
+
+      const sections = document.querySelectorAll('#slides-wrapper section');
+      sections.forEach((sec, i) => {
+        ScrollTrigger.create({
+          trigger: sec,
+          start: 'top 65%',
+          once: true,
+          onEnter: () => {
+            if(i === 1) setFigureStage('one');
+            else if(i === 2) setFigureStage('one');
+            else if(i === 3) setFigureStage('ten');
+            else if(i === 4) setFigureStage('hundred');
+            else if(i === 5) setFigureStage('market');
+            else if(i === 6) setFigureStage('market');
+            else if(i === 7) setFigureStage('intersection');
+            else if(i === 8) setFigureStage('intersection');
+            else if(i === 9) setFigureStage('intersection');
+            
+            const paras = sec.querySelectorAll('.p-body');
+            gsap.to(paras, {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              stagger: 0.12,
+              ease: 'power2.out'
+            });
+          }
+        });
+      });
+    }, 1200);
+  }});
+}
+
+function nextSlide(el) {
+  const current = el.closest('section');
+  const all = document.querySelectorAll('#output-container section');
+  let next = null;
+  for(let i=0; i<all.length; i++){
+    if(all[i]===current && all[i+1]){ next=all[i+1]; break; }
+  }
+  if(!next) return;
+  gsap.to(current, { opacity:0, y:-40, duration:0.5, ease:'power2.in' });
+  setTimeout(() => {
+    gsap.to(window, {
+      scrollTo: { y: next, autoKill: false },
+      duration: 1.0,
+      ease: 'expo.inOut'
+    });
+    gsap.fromTo(next,
+      { opacity:0, y:40 },
+      { opacity:1, y:0, duration:0.7, ease:'power3.out', delay:0.3 }
+    );
+  }, 400);
+}
+
+// ADMIN
+async function showAdmin() {
+  const overlay = document.getElementById('admin-overlay');
+  overlay.style.display = 'block';
+  overlay.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:60px; padding:0 40px;">
+      <h2 style="font-family:var(--font-heading); font-size:40px; font-weight:900;">[SYSTEM_LOG_AUDIT]</h2>
+      <button onclick="closeAdmin()" style="background:var(--gold); border:none; padding:10px 30px; font-weight:900; cursor:pointer;">CLOSE</button>
+    </div>
+    <div id="admin-history-list" style="display:grid; gap:10px; padding:0 40px;">
+      <div style="display:grid; grid-template-columns: 1fr 200px 100px; padding:20px; border-bottom:2px solid var(--text); font-family:var(--font-mono); font-size:11px; opacity:0.5;">
+        <div>QUERY_INPUT</div>
+        <div>TIMESTAMP</div>
+        <div>TOKENS</div>
+      </div>
+    </div>
+  `;
+
+  const res = await fetch('/history');
+  const history = await res.json();
+  const list = document.getElementById('admin-history-list');
+  if (!history.length) {
+    list.innerHTML += `<div style="padding:40px; text-align:center; font-family:var(--font-mono); font-size:12px; opacity:0.3;">NO RECORDS FOUND</div>`;
+    return;
+  }
+  history.reverse().forEach(h => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid; grid-template-columns: 1fr 200px 100px; padding:20px; border-bottom:1px solid rgba(255,255,255,0.05); font-family:var(--font-body); font-size:14px;';
+    row.innerHTML = `
+      <div style="color:var(--gold); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding-right:20px;">${h.input}</div>
+      <div style="font-family:var(--font-mono); font-size:11px; opacity:0.6;">${h.timestamp}</div>
+      <div style="font-family:var(--font-mono); font-size:11px; color:var(--cobalt); text-align:right;">${h.tokens}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+function closeAdmin() { document.getElementById('admin-overlay').style.display='none'; }
+
+// CIPHER EFFECT
+function applyCipher(el) {
+  const original = el.innerText;
+  const chars = 'ABCDEFGHIJKLM-0123456789_*!<>[]';
+  let iter = 0;
+  const interval = setInterval(() => {
+    el.innerText = original.split('').map((c, i) => {
+      if(i < iter) return original[i];
+      return chars[Math.floor(Math.random() * chars.length)];
+    }).join('');
+    if(iter >= original.length) clearInterval(interval);
+    iter += original.length / 20;
+  }, 30);
+}
+// document.querySelectorAll('.loading-big, h1').forEach(h => applyCipher(h));
+
+function populate(data) {
+  if(!data || !data.slides) { console.error("INCOMPLETE DATA"); return; }
+  const container = document.getElementById('slides-wrapper');
+  container.innerHTML = '';
+  
+  const h=()=>Math.floor(Math.random()*360);
+  const getSubtleBg=(hue)=>`linear-gradient(135deg, hsl(${hue},20%,10%), #000)`;
+  const getContrastBg=(hue)=>`linear-gradient(135deg, hsl(${hue},40%,15%), hsl(${(hue+40)%360},40%,5%))`;
+
+  try {
+    // Interstitial 1
+    container.appendChild(createInter("Let's hear what a person in your market is saying about themselves.", true));
+    
+    // Slides 1-3 (Persona)
+    for(let i=0; i<3; i++) {
+      if(data.slides[i]) {
+        const s = data.slides[i];
+        const slideEl = createPersonaSlide(i+1, s.title, s.source, s.paragraphs);
+        if(Math.random() > 0.6) slideEl.style.background = getContrastBg(h());
+        container.appendChild(slideEl);
+      }
+    }
+
+    // Interstitial 2
+    container.appendChild(createInter("We've mapped the individual. Now let's understand the market they're inside.", false));
+
+    // Slides 4-6 (Market)
+    if(data.slides[3]) {
+      const s4 = createMarketSlide(4, data.slides[3].title, data.slides[3].source, data.slides[3].paragraphs);
+      if(Math.random()>0.7) s4.style.background = getContrastBg(h());
+      container.appendChild(s4);
+    }
+    if(data.slides[4]) container.appendChild(createMarketSlide(5, data.slides[4].title, data.slides[4].source, data.slides[4].paragraphs, [], true));
+    if(data.slides[5]) container.appendChild(createMarketSlide(6, data.slides[5].title, data.slides[5].source, data.slides[5].paragraphs, [], true));
+
+    // Interstitial 3
+    container.appendChild(createInter("Comparing both signals. Finding where they collide.", false));
+
+    // Slides 7-8 (Intersection)
+    for(let i=6; i<8; i++) {
+      if(data.slides[i]) {
+        const s = data.slides[i];
+        container.appendChild(createMarketSlide(i+1, s.title, s.source, s.paragraphs, s.elements, true));
+      }
+    }
+
+    // Slide 9 (Strategic Convergence)
+    if(data.slides[8]) {
+      const s9 = data.slides[8];
+      container.appendChild(createMarketSlide(9, s9.title, s9.source, s9.paragraphs, []));
+    }
+
+    // Slide 10 (Final Verdict)
+    if(data.pdf_metadata && data.pdf_metadata.final_bold_statement) {
+      const final = document.createElement('section');
+      final.className = 'interstitial';
+      final.style.background = 'var(--black)';
+      final.style.color = 'var(--gold)';
+      final.innerHTML = `
+        <div class="inter-text glowing-header" style="font-size:50px; line-height:1; margin-bottom:60px; text-transform:uppercase;">${data.pdf_metadata.final_bold_statement}</div>
+        <div style="font-family:var(--font-mono); font-size:9px; color:rgba(255,204,0,0.3); margin-bottom:40px;">DATA ANALYTICS SYNTHESIZED VIA STC ALGO NEURAL ENGINE V6.0 // AUDIT COMPLETE</div>
+        <button id="download-btn" onclick="generatePDF()" class="shake-hover" style="background:var(--gold); color:var(--black); border:none; padding:30px 80px; font-weight:900; font-size:20px;">GENERATE FINAL PDF</button>
+      `;
+      container.appendChild(final);
+    }
+  } catch(err) { console.error("POPULATE ERROR:", err); }
+
+  // Scroll Animations
+  setTimeout(() => {
+    ScrollTrigger.refresh();
+    document.querySelectorAll('.p-body').forEach(box => {
+      gsap.to(box, { 
+        scrollTrigger: { 
+          trigger:box, 
+          start: 'top 95%',
+          toggleActions: 'play none none reverse'
+        }, 
+        opacity:1, y:0, duration:1, ease:"power2.out" 
+      });
+    });
+  }, 1000);
+}
+
+function createInter(txt, hasBtn=false) {
+  const s = document.createElement('section');
+  s.className = 'interstitial';
+  s.style.cssText = 'background:#080808; border-bottom:1px solid rgba(255,255,255,0.06);';
+  const btnHtml = hasBtn
+    ? `<button class="welcome-btn" onclick="nextSlide(this)" 
+        style="margin-top:50px; border:1px solid rgba(255,204,0,0.4); 
+        color:var(--gold); background:transparent; font-family:var(--font-mono); 
+        font-size:10px; letter-spacing:5px; padding:14px 40px;">
+        LET'S GO →
+       </button>`
+    : '';
+  s.innerHTML = `
+    <div style="font-family:var(--font-mono); font-size:8px; letter-spacing:6px; 
+      color:rgba(255,255,255,0.2); margin-bottom:24px; text-transform:uppercase;">
+      STC ALGO — SYSTEM UPDATE
+    </div>
+    <div class="inter-text neon-flicker" style="font-size:clamp(28px,4vw,56px); 
+      font-weight:300; letter-spacing:-1px; line-height:1.15; 
+      max-width:700px; color:rgba(255,255,255,0.85);">
+      ${txt}
+    </div>
+    ${btnHtml}
+  `;
+  gsap.fromTo(s.querySelector('.inter-text'),
+    { opacity: 0 }, { opacity: 1, duration: 1.2, delay: 0.3 }
+  );
+  return s;
+}
+
+function createPersonaSlide(num, title, src, paras) {
+  const s = document.createElement('section'); s.className = 'slide';
+  const flickerClass = num <= 2 ? 'neon-flicker' : '';
+  const animId = 'live-persona-' + num;
+  s.innerHTML = `
+    <div class="slide-title">
+      <div class="slide-num">LOG_ENTRY_0${num}</div>
+      <div class="slide-tag" style="font-family:var(--font-mono); 
+        font-size:8px; letter-spacing:5px; background:transparent; 
+        border:none; color:rgba(255,204,0,0.6); padding:0; 
+        margin-bottom:8px;">${src}</div>
+      <h1 class="${flickerClass} glowing-header" style="font-family:var(--font-heading); font-size:clamp(36px,5vw,64px); 
+        font-weight:900; letter-spacing:-2px; 
+        line-height:0.9; color:var(--text);">${title}</h1>
+      <div style="font-family:var(--font-mono); font-size:7px; color:rgba(255,255,255,0.2); margin-top:10px; text-transform:uppercase;">
+        CREDITS: NEURAL_AUDIT_V6 / SIGNAL_VECTOR_${Math.floor(Math.random()*999)} / VERIFIED_FOOTPRINT
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 2fr; height:calc(100vh - 180px); gap:0; padding:0 40px 40px;">
+       <div id="${animId}" style="border-right:1px solid rgba(255,255,255,0.06); display:flex; justify-content:center; align-items:center;"></div>
+       <div class="corner-grid" style="grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; padding:0 0 0 40px; height:100%; width:100%;">
+          ${paras.map(p => `<div class="corner-box" style="border:none; border-bottom:1px solid rgba(255,255,255,0.05);"><div class="p-body">${p}</div></div>`).join('')}
+       </div>
+    </div>
+  `;
+  
+  setTimeout(() => {
+    const container = document.getElementById(animId);
+    if(!container) return;
+    const w=container.offsetWidth, h=container.offsetHeight;
+    const sce=new THREE.Scene(), cam=new THREE.PerspectiveCamera(45, w/h, 0.1, 100);
+    const rd=new THREE.WebGLRenderer({alpha:true, antialias:true});
+    rd.setSize(w,h); container.appendChild(rd.domElement);
+    cam.position.z=4;
+    
+    // Create a unique figure or knot for this slide
+    const knotGeo = new THREE.TorusKnotGeometry(0.8, 0.2, 100, 16);
+    const knotMat = new THREE.MeshBasicMaterial({color: 0xf3ff00, wireframe: true, transparent: true, opacity: 0.3});
+    const knot = new THREE.Mesh(knotGeo, knotMat);
+    sce.add(knot);
+    
+    function render() {
+      requestAnimationFrame(render);
+      knot.rotation.y += 0.02;
+      knot.rotation.x += 0.01;
+      rd.render(sce, cam);
+    }
+    render();
+  }, 100);
+  
+  return s;
+}
+
+function createMarketSlide(num, title, src, paras, items, isLive=false) {
+  const s = document.createElement('section'); s.className = 'slide';
+  const leftId = 'live-market-' + num;
+  s.innerHTML = `
+    <div class="slide-title">
+      <div class="slide-num">DATA_SECTOR_0${num}</div>
+      <div class="slide-tag" style="font-family:var(--font-mono); 
+        font-size:8px; letter-spacing:5px; background:transparent; 
+        border:none; color:rgba(255,204,0,0.6); padding:0; 
+        margin-bottom:8px;">${src}</div>
+      <h1 class="glowing-header" style="font-family:var(--font-heading); font-size:clamp(36px,5vw,64px); 
+        font-weight:900; letter-spacing:-2px; 
+        line-height:0.9; color:var(--text);">${title}</h1>
+      <div style="font-family:var(--font-mono); font-size:7px; color:rgba(255,204,0,0.4); margin-top:10px; text-transform:uppercase;">
+        CREDITS: NEURAL_AUDIT_V6 / MARKET_VECTOR_${Math.floor(Math.random()*999)} / VERIFIED_DATA_TRAIL
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; height:calc(100vh - 180px); gap:0; padding:0 40px 40px;">
+       ${isLive ? `
+         <div id="${leftId}" style="border-right:1px solid rgba(255,255,255,0.06); display:flex; justify-content:center; align-items:center;"></div>
+         <div style="display:flex; flex-direction:column; justify-content:center; padding-left:40px; gap:20px;">
+           ${paras.slice(0,3).map(p => `
+             <div class="p-body" style="opacity:1; transform:none; color:rgba(255,255,255,0.9);">${p}</div>
+           `).join('')}
+         </div>
+       ` : `
+         <div class="corner-grid" style="grid-column: span 2; padding:0; height:100%;">
+           ${paras.map(p => `<div class="corner-box"><div class="p-body">${p}</div></div>`).join('')}
+         </div>
+       `}
+    </div>
+  `;
+  
+  if(isLive) {
+    setTimeout(() => {
+      const container = document.getElementById(leftId);
+      if(!container) return;
+      const w=container.offsetWidth, h=container.offsetHeight;
+      const sce=new THREE.Scene(), cam=new THREE.PerspectiveCamera(45, w/h, 0.1, 100);
+      const rd=new THREE.WebGLRenderer({alpha:true, antialias:true});
+      rd.setSize(w,h); container.appendChild(rd.domElement);
+      cam.position.z=4;
+      
+      const stall = createMarketStall(0,0,0);
+      stall.scale.setScalar(2);
+      sce.add(stall);
+      
+      function render() {
+        requestAnimationFrame(render);
+        stall.rotation.y += 0.01;
+        stall.rotation.z += 0.005;
+        // Shine pulse
+        stall.children.forEach(c => {
+          if(c.material) c.material.opacity = 0.3 + Math.sin(Date.now()*0.002)*0.2;
+        });
+        rd.render(sce, cam);
+      }
+      render();
+    }, 100);
+  }
+  return s;
+}
+
+function createGraphSlide(num, title, src, paras, graphKey) {
+  const s = document.createElement('section');
+  s.className = 'slide';
+  s.style.background = '#080808';
+  const canvasId = 'graph-canvas-' + num;
+  s.innerHTML = `
+    <div class="slide-title">
+      <div style="font-family:var(--font-mono); font-size:8px; 
+        letter-spacing:5px; color:rgba(0,204,255,0.6); margin-bottom:8px;">
+        DATA_SECTOR_0${num}
+      </div>
+      <h1 style="font-family:var(--font-heading); font-size:clamp(36px,5vw,64px); 
+        font-weight:900; letter-spacing:-2px; color:var(--text); line-height:0.9;">
+        ${title}
+      </h1>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; 
+      height:calc(100vh - 180px); gap:0; padding:0 40px 40px;">
+      <div style="display:flex; flex-direction:column; justify-content:center; 
+        padding-right:40px; border-right:1px solid rgba(255,255,255,0.06);">
+        <canvas id="${canvasId}" width="500" height="320" 
+          style="width:100%; max-height:320px;"></canvas>
+        <div style="font-family:var(--font-mono); font-size:8px; 
+          letter-spacing:3px; color:rgba(255,255,255,0.2); margin-top:16px;">
+          ${src} — BEHAVIORAL DATA SIGNAL
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; justify-content:center; 
+        padding-left:40px; gap:20px;">
+        ${paras.slice(0,2).map(p => `
+          <div class="p-body" style="opacity:1; transform:none; color:rgba(255,255,255,0.9);">${p}</div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  // Draw graph after DOM insertion
+  setTimeout(() => {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    
+    // Background
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Generate data from paragraphs text length as proxy signal
+    const rawData = paras.map((p, i) => ({
+      label: ['W1','W2','W3','W4','W5','W6'][i] || 'W'+(i+1),
+      value: 20 + (p.length % 60)
+    }));
+    
+    const maxVal = Math.max(...rawData.map(d=>d.value));
+    const pad = { top:20, right:20, bottom:40, left:40 };
+    const chartW = w - pad.left - pad.right;
+    const chartH = h - pad.top - pad.bottom;
+    const barW = chartW / rawData.length * 0.6;
+    const gap = chartW / rawData.length;
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75, 1].forEach(pct => {
+      const y = pad.top + chartH * (1 - pct);
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(pad.left + chartW, y);
+      ctx.stroke();
+    });
+
+    // Bars with animation
+    let scanLine = 0;
+    const animate = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, w, h);
+      
+      // Scanning line
+      scanLine = (scanLine + 2) % (h - pad.top - pad.bottom);
+      ctx.strokeStyle = 'rgba(255,204,0,0.15)';
+      ctx.beginPath();
+      ctx.moveTo(pad.left, pad.top + scanLine);
+      ctx.lineTo(w - pad.right, pad.top + scanLine);
+      ctx.stroke();
+
+      rawData.forEach((d, i) => {
+        const barH = (d.value / maxVal) * chartH;
+        const x = pad.left + i * gap + (gap - barW) / 2;
+        const y = pad.top + chartH - barH;
+        
+        const grad = ctx.createLinearGradient(0, y, 0, y + barH);
+        grad.addColorStop(0, 'rgba(255,204,0,0.9)');
+        grad.addColorStop(1, 'rgba(255,204,0,0.1)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(x, y, barW, barH);
+
+        // Buzzing label
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.font = '10px DM Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(d.label, x + barW/2, h - 10);
+      });
+      requestAnimationFrame(animate);
+    };
+    animate();
+
+    // Axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + chartH);
+    ctx.lineTo(pad.left + chartW, pad.top + chartH);
+    ctx.stroke();
+    
+  }, 800);
+
+  return s;
+}
+
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  const H = doc.internal.pageSize.getHeight();
+  const M = 20;
+
+  if (!window._stcData || !window._stcData.slides) {
+    alert('No data to export'); return;
+  }
+
+  const slides = window._stcData.slides;
+
+  slides.forEach((slide, i) => {
+    if (i > 0) doc.addPage();
+    doc.setFillColor(5,5,5);
+    doc.rect(0,0,W,H,'F');
+    doc.setDrawColor(40,40,40);
+    doc.setLineWidth(0.2);
+    doc.line(M,M,W-M,M);
+    doc.line(M,H-M,W-M,H-M);
+    doc.setFont('courier','normal');
+    doc.setFontSize(6);
+    doc.setTextColor(80,80,80);
+    doc.text('STC ALGO V6.0 — BEHAVIORAL INTELLIGENCE', M, M-4);
+    doc.text(slide.source, W-M, M-4, {align:'right'});
+    doc.setFont('courier','bold');
+    doc.setFontSize(18);
+    doc.setTextColor(255,204,0);
+    const titleLines = doc.splitTextToSize(slide.title.toUpperCase(), W - M*2);
+    doc.text(titleLines, M, M+16);
+    
+    doc.setFontSize(6);
+    doc.setTextColor(100,100,100);
+    doc.text(`VERIFIED_DATA_CREDITS: NEURAL_AUDIT_V6 / SIGNAL_VECTOR_${Math.floor(Math.random()*999)}`, M, M+16 + (titleLines.length * 6) + 2);
+    
+    doc.setFont('courier','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(160,156,148);
+    let y = M + 20 + (titleLines.length * 6);
+    (slide.paragraphs||[]).forEach(p => {
+      const lines = doc.splitTextToSize(p, W-M*2);
+      doc.text(lines, M, y);
+      y += lines.length * 5 + 8;
+    });
+  });
+
+  if (window._stcData.pdf_metadata && window._stcData.pdf_metadata.final_bold_statement) {
+    doc.addPage();
+    doc.setFillColor(255,204,0);
+    doc.rect(0,0,W,H,'F');
+    doc.setFont('courier','bold');
+    doc.setFontSize(8);
+    doc.setTextColor(5,5,5);
+    doc.text('[FINAL STRATEGIC VERDICT]', M, M+10);
+    doc.setFontSize(18);
+    const vlines = doc.splitTextToSize(
+      window._stcData.pdf_metadata.final_bold_statement.toUpperCase(), 
+      W-M*2
+    );
+    doc.text(vlines, M, M+28);
+  }
+
+  doc.save('STC-ALGO-V6-Dossier.pdf');
+}
+</script>
+</body>
+</html>
