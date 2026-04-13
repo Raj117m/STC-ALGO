@@ -104,7 +104,7 @@ def parse_llm_json(content):
 
 @app.route('/')
 def index():
-    return send_from_directory('.', 'SVV45.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
