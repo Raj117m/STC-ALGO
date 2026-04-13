@@ -498,7 +498,7 @@ document.getElementById('analyze-btn').onclick=async()=>{
   document.getElementById('status-wrap').style.display='flex';
   let p=0; const intv=setInterval(()=>{p+=Math.random()*15; document.getElementById('sbar-inner').style.width=Math.min(p,95)+'%';},300);
   try {
-    const res=await fetch('http://localhost:5010/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
+    const res=await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
     const data=await res.json();
     clearInterval(intv); document.getElementById('sbar-inner').style.width='100%';
     document.getElementById('status-text').textContent='CONVERGENCE COMPLETE.';

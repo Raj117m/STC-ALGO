@@ -206,7 +206,7 @@ def parse_llm_json(content):
 
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory('.', 'SVV45.html')
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
@@ -290,4 +290,5 @@ def get_stats():
     return jsonify(history)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5010)
+    port = int(os.environ.get('PORT', 5010))
+    app.run(debug=True, port=port, host='0.0.0.0')

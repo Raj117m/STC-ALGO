@@ -467,7 +467,7 @@ document.getElementById('analyze-btn').onclick=async()=>{
   if(!val) return;
   try {
     document.getElementById('screen-input').style.opacity = '0.3';
-    const res=await fetch('http://localhost:5010/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
+    const res=await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
     const data=await res.json();
     gsap.to('#screen-input', {opacity:0, duration:0.6, onComplete:()=>{
       document.getElementById('screen-input').style.display='none';
