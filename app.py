@@ -70,6 +70,14 @@ RULES:
 - MANDATORY: Every paragraph must include at least one quantified behavioral statistic (e.g. "84% shift", "12s latency").
 - Use <span class='highlight'>...</span> for stats.
 - Return ONLY valid JSON. No preamble. No markdown.
+- ANTI-REPETITION RULE: Each slide must cover a completely distinct aspect with ZERO verbal or conceptual overlap.
+- SLIDE 1: Stated values and conscious preferences ONLY.
+- SLIDE 2: Hidden emotional hungers, fears, and subconscious anxieties ONLY.
+- SLIDE 3: Observable behavioral contradictions and hypocrisy ONLY.
+- SLIDES 4-6: Separate, non-overlapping market layers (Power -> Systems -> Cycles).
+- SLIDES 7-8: Distinct intersection angles (Friction vs. Invisible Control).
+- SLIDE 9: Deep strategic convergence. 
+- NO PHRASE or idea from one slide may appear in any other.
 """
 
 def parse_llm_json(content):
@@ -138,7 +146,7 @@ def analyze():
         
         # Log usage
         usage = getattr(response, 'usage', None)
-        total_tokens = usage.total_tokens if usage else 0
+        total_tokens = usage.total_tokens if usage else int(len(user_input) * 1.3)
         log_search(user_input, total_tokens)
         
         return jsonify(result)

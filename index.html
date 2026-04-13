@@ -21,8 +21,8 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background: var(--black); color: var(--text); font-family: var(--font-body); overflow-x: hidden; scroll-behavior: smooth; }
-.bg-blooms { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; opacity: 0.3; filter: blur(100px); }
-.bloom { position: absolute; width: 60vw; height: 60vw; border-radius: 50%; opacity: 0.2; animation: drift 20s infinite alternate ease-in-out; }
+.bg-blooms { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; opacity: 0.5; filter: blur(80px); }
+.bloom { position: absolute; width: 80vw; height: 80vw; border-radius: 50%; opacity: 0.25; animation: drift 15s infinite alternate ease-in-out; }
 @keyframes drift { 0% { transform: translate(-20%, -20%) rotate(0deg); } 100% { transform: translate(20%, 20%) rotate(360deg); } }
 
 /* CANVAS & GLOW */
@@ -134,14 +134,11 @@ h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing
 
 .slide-title {
   position: relative;
-  top: auto;
-  left: auto;
   z-index: 40;
-  padding: 40px 40px 20px 40px;
+  padding: 60px 40px 10px 40px;
   text-align: left;
-  background: transparent;
 }
-.slide-title h1 { font-family:var(--font-heading); font-size: clamp(40px, 6vw, 80px); letter-spacing: -4px; line-height: 0.8; font-weight:900; text-transform:uppercase; margin-bottom:10px; color:inherit; text-shadow: 4px 4px 0px rgba(0,0,0,0.2); }
+.slide-title h1 { font-family:var(--font-heading); font-size: clamp(32px, 5vw, 64px); letter-spacing: -3px; line-height: 0.85; font-weight:900; text-transform:uppercase; margin-bottom:5px; color:inherit; }
 .slide-tag { font-family:var(--font-mono); font-size:12px; letter-spacing:1px; color:var(--text); font-weight:800; background:var(--black); padding:5px 15px; text-transform:uppercase; }
 
 .slide-num {
@@ -158,10 +155,11 @@ h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  padding: 0 40px 40px 40px;
-  gap: 16px;
+  padding: 0 40px 20px 40px;
+  gap: 12px;
   z-index: 15;
-  height: calc(100vh - 180px);
+  height: auto;
+  min-height: 400px;
 }
 .corner-box {
   display: flex;
@@ -174,14 +172,13 @@ h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing
 }
 .p-body {
   font-family: var(--font-body);
-  font-size: 20px;
-  line-height: 1.4;
-  color: rgba(255,255,255,0.9);
-  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.35;
+  color: rgba(255,255,255,0.95);
+  font-weight: 300;
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(10px);
   transition: none;
-  overflow: hidden;
 }
 .highlight { color: var(--gold); font-weight: 900; text-shadow: 0 0 10px var(--gold); }
 #scroll-stc { 
@@ -201,10 +198,29 @@ h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing
 
 #download-btn { background:var(--gold); color:var(--black); border:none; padding:22px 60px; font-family:var(--font-heading); font-size:16px; letter-spacing:5px; cursor:pointer; font-weight:800; margin-top:50px; }
 
-/* FIX INTERSTITIAL STRETCH */
-.interstitial { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:12%; position:relative; z-index:50; background:var(--black); }
-
+@media (max-width: 768px) {
+  #screen-input { grid-template-columns: 1fr; padding: 60px 20px; }
+  .input-left { order: 2; }
+  .sbi-label { top: 30px; left: 20px; font-size: 8px; }
+  #user-input { font-size: 24px; width: 100%; }
+  #three-canvas { opacity: 0.3; }
+  .corner-grid { grid-template-columns: 1fr !important; height: auto !important; padding: 20px !important; gap: 30px !important; }
+  .corner-box { border-left: 2px solid var(--gold); padding: 20px !important; }
+  .slide-title { padding: 100px 20px 20px !important; }
+  .slide-title h1 { font-size: 28px !important; line-height: 1.1 !important; }
+  .hero-bg-text { font-size: 60px !important; }
+  .loading-big { font-size: 40px !important; }
+  .inter-text { font-size: 24px !important; line-height: 1.2 !important; }
+  .nav-bar { padding: 10px 20px; }
+  .nav-logo { font-size: 14px; }
+  .nav-tag { display: none; }
+  .nav-tag:first-child { display: block; font-size: 8px; }
+  .p-body { font-size: 16px !important; line-height: 1.4 !important; }
+  .slide { min-height: auto; padding-bottom: 60px; }
+  #output-container section { width: 100vw; overflow-x: hidden; }
+}
 </style>
+>
 </head>
 <body>
 <audio id="bg-music" loop>
@@ -326,6 +342,10 @@ grid.rotation.x=Math.PI/2; grid.position.y=-4; sc.add(grid);
 const knotMat=new THREE.MeshPhysicalMaterial({color:0xffffff, metalness:0, roughness:0.05, transmission:1, thickness:5, ior:1.5, reflectivity:0.8, clearcoat:1, clearcoatRoughness:0.1, emissive:0xffffff, emissiveIntensity:0.02, transparent:true});
 const knot=new THREE.Mesh(new THREE.TorusKnotGeometry(1.6,0.5,300,48,3,4), knotMat); sc.add(knot);
 
+// Lights for Physical materials
+const ambient = new THREE.AmbientLight(0xffffff, 0.5); sc.add(ambient);
+const point = new THREE.PointLight(0xffffff, 1); point.position.set(5,5,5); sc.add(point);
+
 const texLoader = new THREE.TextureLoader();
 const personaTex = texLoader.load('/Users/rajdeepmalladeb/.gemini/antigravity/brain/ad4cc313-7472-4330-9237-4a0f1abfae80/persona_silhouette_subtle_1775994698310.png');
 const marketTex = texLoader.load('/Users/rajdeepmalladeb/.gemini/antigravity/brain/ad4cc313-7472-4330-9237-4a0f1abfae80/market_stall_abstract_3d_1776011364135.png');
@@ -371,12 +391,57 @@ sc.add(figureGroup);
 let figureCount = 0;
 let currentStage = 'none';
 let musicPlaying = false;
+let audioCtx = null;
+let droneOsc = null;
+let droneGain = null;
+
 function toggleMusic() {
-  const m = document.getElementById('bg-music');
-  if(musicPlaying) { m.pause(); document.getElementById('music-state').innerText='OFF'; }
-  else { m.play(); document.getElementById('music-state').innerText='ON'; }
+  if(!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const createOsc = (freq, type, vol) => {
+      const osc = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(0, audioCtx.currentTime);
+      osc.connect(g); g.connect(audioCtx.destination);
+      osc.start();
+      return g;
+    };
+    droneGain = createOsc(55, 'sine', 0.02);
+    droneGain2 = createOsc(110.5, 'sine', 0.015);
+    droneGain3 = createOsc(165, 'sine', 0.01);
+    // Added metallic shimmer
+    droneGain4 = createOsc(880, 'sine', 0.002); 
+  }
+  
+  const fade = (g, v) => g.gain.setTargetAtTime(v, audioCtx.currentTime, 1.5);
+  if(musicPlaying) { 
+    [droneGain, droneGain2, droneGain3, droneGain4].forEach(g => fade(g, 0));
+    document.getElementById('music-state').innerText='OFF'; 
+  } else { 
+    audioCtx.resume();
+    fade(droneGain, 0.03); fade(droneGain2, 0.02); fade(droneGain3, 0.01); fade(droneGain4, 0.005);
+    document.getElementById('music-state').innerText='ON'; 
+  }
   musicPlaying = !musicPlaying;
 }
+
+function playClick() {
+  if(!audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'triangle';
+  o.frequency.setValueAtTime(1200, audioCtx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.1);
+  g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.1);
+}
+document.addEventListener('click', (e) => { 
+  if(e.target.tagName === 'BUTTON' || e.target.closest('.nav-tag')) playClick();
+});
 
 function createFigure(x, y, z, scale=1) {
   const g = new THREE.Group();
@@ -572,10 +637,26 @@ function startDossier() {
 
       const sections = document.querySelectorAll('#slides-wrapper section');
       sections.forEach((sec, i) => {
+        // Interstitials fade
+        if(sec.classList.contains('interstitial')) {
+          gsap.to(sec, {
+            scrollTrigger: { trigger: sec, start: 'top 80%', toggleActions: 'play none none reverse' },
+            opacity: 1, duration: 1.5
+          });
+        }
+
+        // Title Slide Left
+        const title = sec.querySelector('.slide-title h1');
+        if(title) {
+          gsap.from(title, {
+            scrollTrigger: { trigger: sec, start: 'top 80%' },
+            x: -100, opacity: 0, duration: 1.2, ease: 'power3.out'
+          });
+        }
+
         ScrollTrigger.create({
           trigger: sec,
           start: 'top 65%',
-          once: true,
           onEnter: () => {
             if(i === 1) setFigureStage('one');
             else if(i === 2) setFigureStage('one');
@@ -586,15 +667,6 @@ function startDossier() {
             else if(i === 7) setFigureStage('intersection');
             else if(i === 8) setFigureStage('intersection');
             else if(i === 9) setFigureStage('intersection');
-            
-            const paras = sec.querySelectorAll('.p-body');
-            gsap.to(paras, {
-              opacity: 1,
-              y: 0,
-              duration: 0.7,
-              stagger: 0.12,
-              ease: 'power2.out'
-            });
           }
         });
       });
@@ -737,25 +809,29 @@ function populate(data) {
       final.style.background = 'var(--black)';
       final.style.color = 'var(--gold)';
       final.innerHTML = `
-        <div class="inter-text glowing-header" style="font-size:50px; line-height:1; margin-bottom:60px; text-transform:uppercase;">${data.pdf_metadata.final_bold_statement}</div>
-        <div style="font-family:var(--font-mono); font-size:9px; color:rgba(255,204,0,0.3); margin-bottom:40px;">DATA ANALYTICS SYNTHESIZED VIA STC ALGO NEURAL ENGINE V6.0 // AUDIT COMPLETE</div>
-        <button id="download-btn" onclick="generatePDF()" class="shake-hover" style="background:var(--gold); color:var(--black); border:none; padding:30px 80px; font-weight:900; font-size:20px;">GENERATE FINAL PDF</button>
+        <div style="font-family:var(--font-mono); font-size:9px; letter-spacing:10px; opacity:0.3; margin-bottom:40px;">[FINAL_CORE_SYNTHESIS]</div>
+        <div class="inter-text" style="font-family:var(--font-body); font-size:clamp(24px, 4vw, 42px); line-height:1.4; font-weight:300; max-width:800px; text-transform:none; color:#fff;">${data.pdf_metadata.final_bold_statement}</div>
+        <div style="font-family:var(--font-mono); font-size:8px; color:rgba(255,255,255,0.1); margin:60px 0 40px;">DATA ANALYTICS SYNTHESIZED VIA STC ALGO NEURAL ENGINE V6.0 // AUDIT COMPLETE</div>
+        <button id="download-btn" onclick="generatePDF()" class="shake-hover" style="background:var(--gold); color:var(--black); border:none; padding:22px 60px; font-weight:900; font-size:16px;">GENERATE FINAL PDF</button>
       `;
       container.appendChild(final);
     }
   } catch(err) { console.error("POPULATE ERROR:", err); }
 
-  // Scroll Animations
+  // Container Scroll Animations for Paragraphs
   setTimeout(() => {
     ScrollTrigger.refresh();
-    document.querySelectorAll('.p-body').forEach(box => {
-      gsap.to(box, { 
+    document.querySelectorAll('.corner-box').forEach(box => {
+      gsap.to(box.querySelector('.p-body'), {
         scrollTrigger: { 
-          trigger:box, 
-          start: 'top 95%',
+          trigger: box, 
+          start: 'top 90%',
           toggleActions: 'play none none reverse'
-        }, 
-        opacity:1, y:0, duration:1, ease:"power2.out" 
+        },
+        opacity: 1,
+        y: 0,
+        duration: 1.2,
+        ease: 'power2.out'
       });
     });
   }, 1000);
@@ -809,11 +885,14 @@ function createPersonaSlide(num, title, src, paras) {
         CREDITS: NEURAL_AUDIT_V6 / SIGNAL_VECTOR_${Math.floor(Math.random()*999)} / VERIFIED_FOOTPRINT
       </div>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 2fr; height:calc(100vh - 180px); gap:0; padding:0 40px 40px;">
-       <div id="${animId}" style="border-right:1px solid rgba(255,255,255,0.06); display:flex; justify-content:center; align-items:center;"></div>
-       <div class="corner-grid" style="grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; padding:0 0 0 40px; height:100%; width:100%;">
-          ${paras.map(p => `<div class="corner-box" style="border:none; border-bottom:1px solid rgba(255,255,255,0.05);"><div class="p-body">${p}</div></div>`).join('')}
+    <div style="display:grid; grid-template-columns:1fr; min-height:500px; gap:0; padding:0 40px 40px; position:relative;">
+       <div id="${animId}" style="position:absolute; inset:0; z-index:-1; opacity:0.6; display:flex; justify-content:center; align-items:center; background:radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 80%);"></div>
+       <div class="corner-grid" style="grid-template-columns: 1fr 1fr; grid-template-rows: auto; padding:0; height:100%; width:100%; gap:20px; z-index:10; position:relative;">
+          ${paras.map(p => `<div class="corner-box" style="background:rgba(0,0,0,0.4); backdrop-filter:blur(5px); border:none; border-left:2px solid rgba(255,204,0,0.3); padding:20px;"><div class="p-body">${p}</div></div>`).join('')}
        </div>
+    </div>
+    <div style="padding:0 40px 40px; font-family:var(--font-mono); font-size:8px; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:2px;">
+      SIGNAL_SOURCE: ${src} — STC NEURAL VERIFICATION COMPLETE
     </div>
   `;
   
@@ -1080,10 +1159,10 @@ function generatePDF() {
     doc.setFillColor(255,204,0);
     doc.rect(0,0,W,H,'F');
     doc.setFont('courier','bold');
-    doc.setFontSize(8);
+    doc.setFontSize(10);
     doc.setTextColor(5,5,5);
     doc.text('[FINAL STRATEGIC VERDICT]', M, M+10);
-    doc.setFontSize(18);
+    doc.setFontSize(24);
     const vlines = doc.splitTextToSize(
       window._stcData.pdf_metadata.final_bold_statement.toUpperCase(), 
       W-M*2
