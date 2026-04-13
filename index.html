@@ -201,6 +201,16 @@ h1 { font-family: var(--font-heading); text-transform: uppercase; letter-spacing
   text-shadow: 0 0 10px rgba(255,204,0,0.5);
 }
 
+.highlight {
+  color: var(--gold);
+  font-weight: 800;
+  background: rgba(255,204,0,0.12);
+  padding: 0px 4px;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(255,204,0,0.25);
+  display: inline;
+}
+
 #download-btn {
   background: var(--gold);
   border: none;
@@ -554,7 +564,12 @@ function populate(data) {
 
   container.appendChild(createInter("Let's hear what a person in your market is saying.", true));
   
-  const highlightStats = (text) => text.replace(/(\d+[\d,.]*%?|\b\d+\b)/g, '<span class="stat-highlight">$1</span>');
+  const highlightStats = (text) => {
+    // If text already contains spans (from the model), return as is
+    if (text.includes('<span')) return text;
+    // Otherwise, do a fallback number highlight
+    return text.replace(/(\d+[\d,.]*%?|\b\d+\b)/g, '<span class="stat-highlight">$1</span>');
+  };
 
   const createDataSlide = (idx, s, stage) => {
     const slide = document.createElement('section');
