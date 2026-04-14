@@ -216,6 +216,218 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
 }
 .interstitial { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; z-index:50; background:transparent !important; }
 .inter-text { font-family:var(--font-heading); font-size:clamp(40px, 6vw, 100px); font-weight:800; line-height:0.9; text-transform:uppercase; letter-spacing:-3px; }
+
+.visuals-row {
+  display: flex;
+  gap: 16px;
+  padding: 0 40px 40px 220px;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+.visual-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 24px;
+  flex: 1;
+  min-width: 180px;
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.visual-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, var(--gold), transparent);
+  opacity: 0.4;
+}
+
+.stat-block-value {
+  font-family: var(--font-heading);
+  font-size: 52px;
+  font-weight: 600;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.stat-block-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.stat-block-context {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.comp-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.comp-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comp-bar-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+}
+
+.comp-bar-track {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.comp-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 1.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.comp-bar-fill.a { background: var(--gold); }
+.comp-bar-fill.b { background: var(--cobalt); }
+
+.comp-bar-val {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  font-family: var(--font-mono);
+}
+
+.ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ring-svg { transform: rotate(-90deg); }
+
+.ring-bg {
+  fill: none;
+  stroke: rgba(255,255,255,0.06);
+  stroke-width: 4;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 226;
+  stroke-dashoffset: 226;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.ring-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.ring-value {
+  position: absolute;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.ring-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+.timeline-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  position: relative;
+}
+
+.timeline-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 28px;
+  width: 1px;
+  height: 16px;
+  background: rgba(255,255,255,0.1);
+}
+
+.timeline-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  flex-shrink: 0;
+  position: relative;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.timeline-dot.active {
+  background: var(--gold);
+}
+
+.timeline-dot.lit { opacity: 1; }
+
+.timeline-text {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .visuals-row {
+    padding: 0 16px 24px;
+    gap: 10px;
+  }
+  .visual-card {
+    min-width: 140px;
+    padding: 16px;
+  }
+  .stat-block-value { font-size: 36px; }
+}
 </style>
 </head>
 <body>
@@ -299,6 +511,29 @@ function startDossier() {
   gsap.to('#screen-loading-dossier', { opacity: 0, duration: 0.6, onComplete: () => {
     document.getElementById('screen-loading-dossier').style.display = 'none';
     document.getElementById('output-container').style.display = 'block';
+    
+    // Global ScrollTrigger for all slides
+    document.querySelectorAll('.slide').forEach((sec, idx) => {
+      ScrollTrigger.create({
+        trigger: sec,
+        start: 'top 80%',
+        onEnter: () => {
+          const paras = sec.querySelectorAll('.p-body');
+          gsap.to(paras, { opacity: 1, y: 0, stagger: 0.1, duration: 0.8 });
+          
+          const vCards = sec.querySelectorAll('.visual-card');
+          gsap.fromTo(vCards,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.6,
+              stagger: 0.1, ease: 'power2.out', delay: 0.4 }
+          );
+          animateVisuals(sec);
+          
+          if(sec.dataset.figureStage) setFigureStage(sec.dataset.figureStage);
+        }
+      });
+    });
+
     ScrollTrigger.refresh();
   }});
 }
@@ -310,57 +545,78 @@ function populate(data) {
     if(i === 0) wrapper.appendChild(createInter("LET'S HEAR WHAT A PERSON IN YOUR MARKET IS SAYING.", true));
     
     let slide;
-    const { title, paragraphs, key_stats, source } = s;
-    if(i < 2) slide = createPersonaSlide(title, paragraphs, key_stats, source, i+1);
-    else if(i < 8) slide = createMarketSlide(title, paragraphs, key_stats, source, i+1);
-    else slide = createGraphSlide(title, paragraphs, key_stats, source, i+1);
+    if(i < 3) {
+      slide = createPersonaSlide(i+1, s.title, s.source, s.paragraphs, s.key_stats, s.visuals);
+      slide.dataset.figureStage = 'one';
+    } else if(i < 8) {
+      slide = createMarketSlide(i+1, s.title, s.source, s.paragraphs, [], false, s.key_stats, s.visuals);
+      slide.dataset.figureStage = 'market';
+    } else {
+      slide = createMarketSlide(i+1, s.title, s.source, s.paragraphs, [], false, s.key_stats, s.visuals);
+      slide.dataset.figureStage = 'intersection';
+    }
     
     wrapper.appendChild(slide);
   });
 }
 
-function createPersonaSlide(t, p, ks, src, idx) { return createSlide(t, p, ks, src, idx, 'one'); }
-function createMarketSlide(t, p, ks, src, idx) { return createSlide(t, p, ks, src, idx, 'market'); }
-function createGraphSlide(t, p, ks, src, idx) { return createSlide(t, p, ks, src, idx, 'intersection'); }
-
-function createSlide(title, paragraphs, key_stats, source, idx, stage) {
-  const sec = document.createElement('section');
-  sec.className = 'slide';
-  sec.dataset.figureStage = stage;
-  const stats = key_stats || ["SIGNAL_ZERO", "SIGNAL_ONE", "SIGNAL_TWO", "SIGNAL_THREE", "SIGNAL_FOUR", "SIGNAL_FIVE"];
-  const delays = [0, 0.4, 0.8, 1.2, 1.6, 2.0];
-
-  sec.innerHTML = `
-    <div class="slide-layout">
-      <div class="mobile-stats-row" style="display:none;">${stats.map((st, i) => `<div class="stat-pill" style="animation-delay:${delays[i % delays.length]}s">${st}</div>`).join('')}</div>
-      <div class="stats-col">
-        ${stats.map((st, i) => `<div class="stat-pill" style="animation-delay:${delays[i % delays.length]}s">${st}</div>`).join('')}
-      </div>
-      <div class="content-col">
-        <h1 class="slide-heading" style="opacity:0; transform:translateX(-50px); font-family:var(--font-heading); font-size:48px;">${title}</h1>
-        <div class="corner-grid" style="margin-top:40px;">
-          ${paragraphs.map((p, i) => `
-            <div class="corner-box p-box" style="opacity:0; transform:translateY(30px); border-left:2px solid var(--gold); padding-left:20px;">
-              <p class="p-body" style="font-size:18px; line-height:1.6; font-weight:300;">${p}</p>
-            </div>
-          `).join('')}
-        </div>
-        <div style="font-family:var(--font-mono); font-size:8px; opacity:0.2; margin-top:40px;">SOURCE: ${source} // BLOCK_SIG: ${idx.toString().padStart(3,'0')}</div>
-      </div>
+function createPersonaSlide(num, title, src, paras, keyStats, visuals) {
+  const s = document.createElement('section');
+  s.className = 'slide';
+  s.innerHTML = `
+    <div class="slide-title">
+      <div style="font-family:var(--font-mono);font-size:8px;
+        letter-spacing:5px;color:rgba(255,204,0,0.6);
+        margin-bottom:8px;">${src}</div>
+      <h1 style="font-family:var(--font-heading);
+        font-size:clamp(32px,4vw,52px);font-weight:300;
+        font-style:italic;letter-spacing:-1px;
+        line-height:1;color:var(--text);">${title}</h1>
     </div>
+    <div class="corner-grid" id="grid-${num}">
+      ${(paras||[]).map(p => `
+        <div class="corner-box">
+          <div class="p-body">${p}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="visuals-row" id="visuals-${num}"></div>
   `;
+  setTimeout(() => {
+    const vRow = s.querySelector('#visuals-'+num);
+    if (vRow && visuals) renderVisuals(vRow, visuals);
+  }, 100);
+  return s;
+}
 
-  ScrollTrigger.create({
-    trigger: sec,
-    start: 'top 80%',
-    onEnter: () => {
-      gsap.to(sec.querySelector('.slide-heading'), { opacity: 1, x: 0, duration: 0.7 });
-      gsap.to(sec.querySelectorAll('.stats-col .stat-item'), { opacity: 1, x: 0, stagger: 0.15, duration: 0.5 });
-      gsap.to(sec.querySelectorAll('.p-box'), { opacity: 1, y: 0, stagger: 0.12, duration: 0.8 });
-    }
-  });
-
-  return sec;
+function createMarketSlide(num, title, src, paras, items, isInter, keyStats, visuals) {
+  const s = document.createElement('section');
+  s.className = 'slide';
+  s.innerHTML = `
+    <div class="slide-title">
+      <div style="font-family:var(--font-mono);font-size:8px;
+        letter-spacing:5px;color:rgba(0,204,255,0.6);
+        margin-bottom:8px;">${src}</div>
+      <h1 style="font-family:var(--font-heading);
+        font-size:clamp(32px,4vw,52px);font-weight:300;
+        font-style:italic;letter-spacing:-1px;
+        line-height:1;color:var(--text);">${title}</h1>
+    </div>
+    <div class="corner-grid" id="grid-m${num}">
+      ${(paras||[]).map(p => `
+        <div class="corner-box">
+          <div class="p-body" style="opacity:1;
+            transform:none;">${p}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="visuals-row" id="visuals-m${num}"></div>
+  `;
+  setTimeout(() => {
+    const vRow = s.querySelector('#visuals-m'+num);
+    if (vRow && visuals) renderVisuals(vRow, visuals);
+  }, 100);
+  return s;
 }
 
 function createInter(txt, hasSure = false) {
@@ -388,6 +644,95 @@ function nextSlide(btn) {
   playClick();
   const next = btn.closest('section').nextElementSibling;
   if(next) gsap.to(window, { scrollTo: next, duration: 1 });
+}
+
+function renderVisuals(container, visuals) {
+  if (!visuals || !visuals.length) return;
+  visuals.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'visual-card';
+    card.style.animationDelay = (i * 0.15) + 's';
+
+    if (v.type === 'stat_block') {
+      card.innerHTML = `
+        <div class="stat-block-value">${v.value}</div>
+        <div class="stat-block-label">${v.label}</div>
+        ${v.context ? `<div class="stat-block-context">${v.context}</div>` : ''}
+      `;
+
+    } else if (v.type === 'comparison_bar') {
+      card.innerHTML = `
+        <div class="comp-bar-wrap">
+          <div class="comp-bar-item">
+            <div class="comp-bar-label">${v.label_a}</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="comp-bar-track" style="flex:1;">
+                <div class="comp-bar-fill a" 
+                  data-val="${v.value_a}"></div>
+              </div>
+              <div class="comp-bar-val">${v.value_a}%</div>
+            </div>
+          </div>
+          <div class="comp-bar-item">
+            <div class="comp-bar-label">${v.label_b}</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="comp-bar-track" style="flex:1;">
+                <div class="comp-bar-fill b" 
+                  data-val="${v.value_b}"></div>
+              </div>
+              <div class="comp-bar-val">${v.value_b}%</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+    } else if (v.type === 'percentage_ring') {
+      const offset = 226 - (226 * v.value / 100);
+      card.innerHTML = `
+        <div class="ring-wrap">
+          <div class="ring-container">
+            <svg class="ring-svg" width="80" height="80" 
+              viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="36"/>
+              <circle class="ring-fill" cx="40" cy="40" r="36"
+                data-offset="${offset}"/>
+            </svg>
+            <div class="ring-value">${v.value}%</div>
+          </div>
+          <div class="ring-label">${v.label}</div>
+        </div>
+      `;
+
+    } else if (v.type === 'timeline') {
+      card.innerHTML = `
+        <div class="timeline-wrap">
+          ${(v.points||[]).map((pt, i) => `
+            <div class="timeline-step">
+              <div class="timeline-dot ${i===0?'active':''}" 
+                data-idx="${i}"></div>
+              <div class="timeline-text">${pt}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    container.appendChild(card);
+  });
+
+  setTimeout(() => animateVisuals(container), 400);
+}
+
+function animateVisuals(container) {
+  container.querySelectorAll('.comp-bar-fill').forEach(bar => {
+    bar.style.width = bar.dataset.val + '%';
+  });
+  container.querySelectorAll('.ring-fill').forEach(ring => {
+    ring.style.strokeDashoffset = ring.dataset.offset;
+  });
+  container.querySelectorAll('.timeline-dot').forEach((dot,i) => {
+    setTimeout(() => dot.classList.add('lit'), i * 300);
+  });
 }
 
 // 3D SCENE
@@ -467,7 +812,7 @@ document.getElementById('analyze-btn').onclick=async()=>{
   if(!val) return;
   try {
     document.getElementById('screen-input').style.opacity = '0.3';
-    const res=await fetch('https://stc-algo.onrender.com/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
+    const res=await fetch('http://127.0.0.1:5010/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
     const data=await res.json();
     gsap.to('#screen-input', {opacity:0, duration:0.6, onComplete:()=>{
       document.getElementById('screen-input').style.display='none';
