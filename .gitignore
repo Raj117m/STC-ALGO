@@ -4,3 +4,6 @@ __pycache__/
 .env
 history.json
 .DS_Store
+pipeline_state.json
+pipeline_state.json.tmp
+*.log
