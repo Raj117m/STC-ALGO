@@ -665,10 +665,6 @@
 </head>
 
 <body>
-  <audio id="bg-music" loop>
-    <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_735c05d76d.mp3" type="audio/mpeg">
-  </audio>
-
   <div class="bg-blooms">
     <div class="bloom" style="top:-10%; left:-10%; background:var(--cobalt);"></div>
     <div class="bloom" style="bottom:-10%; right:-10%; background:var(--pink); animation-delay:-5s;"></div>
@@ -916,28 +912,46 @@
       const val = document.getElementById('user-input').value.trim();
       if (!val) return;
       document.getElementById('status-wrap').style.display = 'flex';
-      let p = 0; const intv = setInterval(() => { p += Math.random() * 15; document.getElementById('sbar-inner').style.width = Math.min(p, 95) + '%'; }, 300);
+      let p = 0; 
+      const intv = setInterval(() => { 
+        p += Math.random() * 15; 
+        document.getElementById('sbar-inner').style.width = Math.min(p, 95) + '%'; 
+      }, 300);
+
       try {
-        const res = await fetch('https://stc-algo.onrender.com/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ input: val }) });
+        const res = await fetch('http://127.0.0.1:5010/analyze', { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify({ input: val }) 
+        });
         const data = await res.json();
-        clearInterval(intv); document.getElementById('sbar-inner').style.width = '100%';
+        clearInterval(intv); 
+        document.getElementById('sbar-inner').style.width = '100%';
         document.getElementById('status-text').textContent = 'CONVERGENCE COMPLETE.';
+        
+        // Populate data immediately
+        populate(data);
+
         setTimeout(() => {
           gsap.to('#screen-input', {
-            opacity: 0, duration: 1, onComplete: () => {
+            opacity: 0, duration: 0.8, onComplete: () => {
               document.getElementById('screen-input').style.display = 'none';
               document.getElementById('screen-loading-dossier').style.display = 'flex';
-              gsap.fromTo('#screen-loading-dossier', { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power2.out" });
+              gsap.fromTo('#screen-loading-dossier', { opacity: 0 }, { opacity: 1, duration: 0.8 });
+              
+              // Force show the trigger after a short delay
               setTimeout(() => {
                 const btn = document.getElementById('explore-trigger');
                 btn.style.display = 'block';
-                gsap.fromTo(btn, { opacity: 0 }, { opacity: 1, duration: 1.5 });
-              }, 1500);
+                gsap.fromTo(btn, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 1 });
+              }, 1000);
             }
           });
-          populate(data);
-        }, 1000);
-      } catch (e) { alert("ERROR:LATER NERDS"); }
+        }, 800);
+      } catch (e) { 
+        alert("ERROR: CONNECTION FAILURE"); 
+        clearInterval(intv);
+      }
     };
 
     function startDossier() {
@@ -946,25 +960,19 @@
       document.documentElement.style.overflowY = 'auto';
 
       gsap.to('#screen-loading-dossier', {
-        opacity: 0, duration: 0.6, onComplete: () => {
+        opacity: 0, duration: 0.5, onComplete: () => {
           document.getElementById('screen-loading-dossier').style.display = 'none';
-          const container = document.getElementById('output-container');
-          container.style.display = 'block';
+          document.getElementById('output-container').style.display = 'block';
 
-          // Forced scroll activation
+          // Critical: double-refresh ScrollTrigger
           ScrollTrigger.refresh();
           setTimeout(() => {
             ScrollTrigger.refresh();
-            window.scrollTo(0, 1); // Tiny bump to trigger ScrollTrigger
-
-            document.querySelectorAll('section').forEach(sec => {
-              ScrollTrigger.create({
-                trigger: sec,
-                start: 'top 65%',
-                onEnter: () => { if (sec.dataset.figureStage) setFigureStage(sec.dataset.figureStage); }
-              });
-            });
-          }, 1200);
+            window.scrollTo(0, 1);
+            
+            // Force reveal all p-bodies if they are stuck
+            gsap.to('.p-body', { opacity: 1, y: 0, duration: 1, stagger: 0.05, delay: 0.5 });
+          }, 500);
         }
       });
     }
@@ -1061,7 +1069,7 @@
     </div>
     <div id="admin-history-list" style="padding:0 40px;"></div>
   `;
-      const res = await fetch('https://stc-algo.onrender.com/history');
+      const res = await fetch('http://127.0.0.1:5010/history');
       const history = await res.json();
       const list = document.getElementById('admin-history-list');
       history.reverse().forEach(h => {

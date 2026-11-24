@@ -14,6 +14,9 @@
   --gold: #f3ff00;
   --cobalt: #00f0ff;
   --pink: #ff00ff;
+  --emerald: #00ffca;
+  --amber: #ffaa00;
+  --ruby: #ff0055;
   --font-heading: 'Unbounded', cursive;
   --font-body: 'Syne', sans-serif;
   --font-mono: 'DM Mono', monospace;
@@ -23,50 +26,145 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background: var(--black); color: var(--text); font-family: var(--font-body); overflow: hidden; scroll-behavior: smooth; }
 
-/* ACCESS GATE */
-#access-gate {
-  position: fixed;
-  inset: 0;
-  background: black;
-  z-index: 9999;
+/* WELCOME SCREEN */
+#screen-welcome {
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.8s ease-in-out;
-}
-#access-gate h1 { font-family: var(--font-gate); font-size: 32px; color: var(--gold); letter-spacing: 5px; margin-bottom: 30px; }
-#access-input {
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid var(--gold);
-  color: var(--gold);
-  font-family: var(--font-mono);
-  font-size: 24px;
   text-align: center;
-  padding: 10px;
-  outline: none;
-  width: 300px;
-  margin-bottom: 20px;
+  z-index: 100;
+  position: relative;
+  overflow: hidden;
 }
-#access-btn {
-  background: transparent;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  padding: 10px 40px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 3px;
+
+.hero-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-heading);
+  font-size: clamp(120px, 30vw, 500px);
+  color: rgba(255, 255, 255, 0.02);
+  letter-spacing: -15px;
+  pointer-events: none;
+  font-weight: 900;
+  z-index: -1;
+}
+
+.welcome-btn {
+  background: var(--gold);
+  border: none;
+  color: var(--black);
+  padding: 24px 60px;
+  font-family: var(--font-heading);
+  font-size: 16px;
+  letter-spacing: 2px;
   cursor: pointer;
   transition: 0.3s;
+  margin-top: 40px;
+  pointer-events: auto;
+  font-weight: 800;
+  box-shadow: 8px 8px 0px var(--cobalt);
 }
-#access-btn:hover { background: var(--gold); color: black; }
-#access-error { color: #ff0000; font-family: var(--font-mono); font-size: 10px; margin-top: 15px; visibility: hidden; }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  75% { transform: translateX(10px); }
+.welcome-btn:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0px var(--pink);
+}
+
+/* INPUT SCREEN */
+#screen-input {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  padding: 80px;
+  z-index: 10;
+  position: relative;
+  display: none;
+  opacity: 0;
+}
+
+.input-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sbi-label {
+  position: absolute;
+  top: 120px;
+  left: 80px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  text-transform: uppercase;
+  z-index: 20;
+}
+
+#user-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--text);
+  color: var(--text);
+  font-size: 42px;
+  padding: 20px 0;
+  outline: none;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  resize: none;
+}
+
+#analyze-btn {
+  margin-top: 50px;
+  background: transparent;
+  border: 1px solid rgba(255, 204, 0, 0.5);
+  color: var(--gold);
+  padding: 18px 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+#analyze-btn:hover {
+  background: var(--gold);
+  color: var(--black);
+}
+
+#status-wrap {
+  margin-top: 40px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+}
+
+#status-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cobalt);
+  letter-spacing: 4px;
+  font-weight: 700;
+}
+
+.sbar {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sbar-inner {
+  height: 100%;
+  width: 0%;
+  background: var(--cobalt);
+  transition: width .5s;
 }
 
 /* 3-COLUMN ARCHITECTURE */
@@ -75,18 +173,28 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
   position: relative;
   z-index: 10;
   display: flex;
-  padding: 0 40px;
-  overflow: hidden;
+  flex-direction: column; /* Verticalize */
+  padding: 80px 10%;
+  overflow-y: auto;
   background: transparent !important;
 }
 
-.slide-layout {
+.slide-title {
+  margin-bottom: 60px;
+  max-width: 800px;
+}
+
+.corner-grid {
   display: flex;
+  flex-direction: column;
+  gap: 32px;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  gap: 40px;
-  padding: 100px 0;
+  max-width: 800px;
+  margin-bottom: 80px;
+}
+
+.corner-box {
+  width: 100%;
 }
 
 .stats-col {
@@ -158,10 +266,7 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
 .nav-bar { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:20px 40px; z-index:1000; }
 .nav-logo { font-family: var(--font-heading); font-size: 20px; font-weight: 900; color: var(--text); letter-spacing: -1px; cursor: pointer; }
 
-/* WELCOME SCREEN */
-#screen-welcome { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; z-index:100; position:relative; overflow:hidden; visibility: hidden; }
-.hero-bg-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:var(--font-heading); font-size:clamp(120px,30vw,500px); color:rgba(255,255,255,0.02); letter-spacing:-15px; pointer-events:none; font-weight:900; z-index:-1; }
-.welcome-btn { background:var(--gold); border:none; color:var(--black); padding:24px 60px; font-family:var(--font-heading); font-size:16px; letter-spacing:2px; cursor:pointer; font-weight:800; }
+/* WELCOME SCREEN Styles Replaced Above */
 
 /* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
@@ -188,19 +293,23 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
   .content-col { max-width: 100%; }
   .hero-bg-text { font-size: 14vw; }
   .loading-big { font-size: 44px; }
-  .p-body { font-size: 12px !important; }
-  #three-canvas { opacity: 0.2; }
 }
 
-/* REUSE OTHER STYLES FROM INDEX */
-.corner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1100px; margin: 0 auto; }
+.p-body {
+  font-family: var(--font-body);
+  font-size: 15px !important;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.1px;
+  margin-bottom: 24px;
+  max-width: 800px;
+}
+
 .highlight {
   color: var(--gold);
-  font-weight: 600;
-  background: rgba(255,204,0,0.08);
-  padding: 1px 4px;
-  border-radius: 2px;
-  box-shadow: 0 0 8px rgba(255,204,0,0.2);
+  font-weight: 700;
+  background: rgba(255,204,0,0.06);
+  padding: 0 4px;
   position: relative;
 }
 
@@ -212,17 +321,19 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
   right: 0;
   height: 1px;
   background: var(--gold);
-  opacity: 0.4;
+  opacity: 0.8;
 }
 .interstitial { height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; z-index:50; background:transparent !important; }
 .inter-text { font-family:var(--font-heading); font-size:clamp(40px, 6vw, 100px); font-weight:800; line-height:0.9; text-transform:uppercase; letter-spacing:-3px; }
 
 .visuals-row {
   display: flex;
-  gap: 16px;
-  padding: 0 40px 40px 220px;
+  gap: 24px;
+  padding: 40px 0;
   flex-wrap: wrap;
-  align-items: stretch;
+  align-items: flex-start;
+  width: 100%;
+  border-top: 1px solid rgba(255,255,255,0.05);
 }
 
 .visual-card {
@@ -246,8 +357,8 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
   top: 0; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(90deg, 
-    transparent, var(--gold), transparent);
-  opacity: 0.4;
+    transparent, var(--accent, var(--gold)), transparent);
+  opacity: 0.6;
 }
 
 .stat-block-value {
@@ -312,7 +423,7 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
 }
 
 .comp-bar-fill.a { background: var(--gold); }
-.comp-bar-fill.b { background: var(--cobalt); }
+.comp-bar-fill.b { background: rgba(255,204,0,0.25); border: 1px solid rgba(255,204,0,0.3); }
 
 .comp-bar-val {
   font-size: 11px;
@@ -432,13 +543,6 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
 </head>
 <body>
 
-<div id="access-gate">
-  <h1>ENTER ACCESS CODE</h1>
-  <input type="password" id="access-input" placeholder="****">
-  <button id="access-btn" onclick="checkAccess()">CONFIRM</button>
-  <div id="access-error">ACCESS DENIED</div>
-</div>
-
 <div id="screen-welcome">
   <div class="hero-bg-text">STC</div>
   <div style="font-family:var(--font-heading); font-size:120px; text-transform:uppercase; font-weight:900; letter-spacing:-10px; line-height:0.8;">SEE THE <span style="color:var(--gold)">UNSEEN</span></div>
@@ -446,10 +550,25 @@ body { background: var(--black); color: var(--text); font-family: var(--font-bod
 </div>
 
 <section id="screen-input" style="display:none; height:100vh; padding:80px;">
-  <!-- Minimal Float Cues -->
-  <div style="position:absolute; top:40px; left:40px; font-family:var(--font-mono); font-size:8px; opacity:0.3;">[NEURAL_GATE: ACTIVE]</div>
-  <textarea id="user-input" style="width:100%; background:transparent; border:none; border-bottom:2px solid #fff; color:#fff; font-size:42px; font-family:var(--font-heading); outline:none;" placeholder="Define demographic..."></textarea>
-  <button id="analyze-btn" style="margin-top:40px; background:var(--gold); border:none; padding:15px 40px; font-weight:800;">ANALYSE</button>
+  <div class="sbi-label">Strategic Behavioural Intelligence</div>
+  <div class="input-left">
+    <textarea id="user-input" placeholder="Define a demographic segment..." rows="1"></textarea>
+    <div><button id="analyze-btn">ANALYSE →</button></div>
+    <div id="status-wrap">
+      <div id="status-text">CALIBRATING NEURAL MODELS...</div>
+      <div class="sbar">
+        <div class="sbar-inner" id="sbar-inner"></div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; flex-direction:column; justify-content:center; border-left:1px solid var(--border); padding-left:60px;">
+    <div style="font-family:var(--font-mono); font-size:9px; letter-spacing:4px; color:rgba(255,255,255,0.3); margin-bottom:40px; text-transform:uppercase;">HOW TO USE</div>
+    <div style="font-size:13px; color:rgba(255,255,255,0.6); line-height:2.2; font-family:var(--font-body); font-weight:300;">
+      01 &nbsp; Tell us what market you are trying to enter.<br>
+      02 &nbsp; Mention where your demographic sits.<br>
+      03 &nbsp; Watch the system analyse the gap.
+    </div>
+  </div>
 </section>
 
 <div id="screen-loading-dossier" style="display:none; height:100vh; flex-direction:column; align-items:center; justify-content:center;">
@@ -484,25 +603,12 @@ function playClick() {
 
 document.querySelectorAll('button').forEach(btn => btn.addEventListener('click', playClick));
 
-function checkAccess() {
-  playClick();
-  const input = document.getElementById('access-input');
-  if(input.value.toUpperCase() === 'NSFW') {
-    gsap.to('#access-gate', { opacity: 0, duration: 0.8, onComplete: () => {
-      document.getElementById('access-gate').style.display = 'none';
-      document.getElementById('screen-welcome').style.visibility = 'visible';
-    }});
-  } else {
-    gsap.to('#access-input', { x: 10, repeat: 5, yoyo: true, duration: 0.05 });
-    document.getElementById('access-error').style.visibility = 'visible';
-  }
-}
-
 function enterApp() {
   playClick();
   gsap.to('#screen-welcome', { opacity: 0, scale: 1.1, duration: 0.8, onComplete: () => {
     document.getElementById('screen-welcome').style.display = 'none';
-    document.getElementById('screen-input').style.display = 'block';
+    document.getElementById('screen-input').style.display = 'grid';
+    gsap.fromTo('#screen-input', { opacity: 0 }, { opacity: 1, duration: 1 });
   }});
 }
 
@@ -511,6 +617,7 @@ function startDossier() {
   gsap.to('#screen-loading-dossier', { opacity: 0, duration: 0.6, onComplete: () => {
     document.getElementById('screen-loading-dossier').style.display = 'none';
     document.getElementById('output-container').style.display = 'block';
+    document.body.style.overflow = 'auto'; // Enable scrolling for the dossier
     
     // Global ScrollTrigger for all slides
     document.querySelectorAll('.slide').forEach((sec, idx) => {
@@ -534,7 +641,18 @@ function startDossier() {
       });
     });
 
+    // Reliability fallback: Force initial animations to trigger
     ScrollTrigger.refresh();
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+      window.scrollTo(0, 1);
+      // Force reveal first slide content if stuck
+      const firstSlide = document.querySelector('.slide');
+      if(firstSlide) {
+        if(typeof animateVisuals === 'function') animateVisuals(firstSlide);
+        gsap.to(firstSlide.querySelectorAll('.p-body'), { opacity:1, y:0, duration:1 });
+      }
+    }, 500);
   }});
 }
 
@@ -603,7 +721,7 @@ function createMarketSlide(num, title, src, paras, items, isInter, keyStats, vis
         line-height:1;color:var(--text);">${title}</h1>
     </div>
     <div class="corner-grid" id="grid-m${num}">
-      ${(paras||[]).map(p => `
+      ${( (paras || items || []) ).map(p => `
         <div class="corner-box">
           <div class="p-body" style="opacity:1;
             transform:none;">${p}</div>
@@ -648,14 +766,21 @@ function nextSlide(btn) {
 
 function renderVisuals(container, visuals) {
   if (!visuals || !visuals.length) return;
+  
+  const accent = `var(--gold)`; // Unified Gold theme for professional focus
+
   visuals.forEach((v, i) => {
     const card = document.createElement('div');
     card.className = 'visual-card';
     card.style.animationDelay = (i * 0.15) + 's';
+    card.style.setProperty('--accent', accent);
+    
+    card.style.borderColor = `rgba(255,255,255,0.08)`;
+    card.style.background = `rgba(15,15,15,0.5)`;
 
     if (v.type === 'stat_block') {
       card.innerHTML = `
-        <div class="stat-block-value">${v.value}</div>
+        <div class="stat-block-value" style="color:${accent}">${v.value}</div>
         <div class="stat-block-label">${v.label}</div>
         ${v.context ? `<div class="stat-block-context">${v.context}</div>` : ''}
       `;
@@ -668,6 +793,7 @@ function renderVisuals(container, visuals) {
             <div style="display:flex;align-items:center;gap:8px;">
               <div class="comp-bar-track" style="flex:1;">
                 <div class="comp-bar-fill a" 
+                  style="background:${accent};"
                   data-val="${v.value_a}"></div>
               </div>
               <div class="comp-bar-val">${v.value_a}%</div>
@@ -680,7 +806,7 @@ function renderVisuals(container, visuals) {
                 <div class="comp-bar-fill b" 
                   data-val="${v.value_b}"></div>
               </div>
-              <div class="comp-bar-val">${v.value_b}%</div>
+              <div class="comp-bar-val" style="color:rgba(255,255,255,0.6)">${v.value_b}%</div>
             </div>
           </div>
         </div>
@@ -690,14 +816,14 @@ function renderVisuals(container, visuals) {
       const offset = 226 - (226 * v.value / 100);
       card.innerHTML = `
         <div class="ring-wrap">
-          <div class="ring-container">
+          <div class="ring-container" style="position:relative;display:flex;align-items:center;justify-content:center;">
             <svg class="ring-svg" width="80" height="80" 
               viewBox="0 0 80 80">
               <circle class="ring-bg" cx="40" cy="40" r="36"/>
               <circle class="ring-fill" cx="40" cy="40" r="36"
                 data-offset="${offset}"/>
             </svg>
-            <div class="ring-value">${v.value}%</div>
+            <div class="ring-value" style="color:${accent}">${v.value}%</div>
           </div>
           <div class="ring-label">${v.label}</div>
         </div>
@@ -709,6 +835,7 @@ function renderVisuals(container, visuals) {
           ${(v.points||[]).map((pt, i) => `
             <div class="timeline-step">
               <div class="timeline-dot ${i===0?'active':''}" 
+                style="background:var(--gold);box-shadow:0 0 10px var(--gold)"
                 data-idx="${i}"></div>
               <div class="timeline-text">${pt}</div>
             </div>
@@ -806,24 +933,54 @@ function anim(){
 anim();
 
 // ANALYZE ENGINE
-document.getElementById('analyze-btn').onclick=async()=>{
+document.getElementById('analyze-btn').onclick = async () => {
   playClick();
-  const val=document.getElementById('user-input').value.trim();
-  if(!val) return;
+  const val = document.getElementById('user-input').value.trim();
+  if (!val) return;
+  
+  document.getElementById('status-wrap').style.display = 'flex';
+  let p = 0; 
+  const intv = setInterval(() => { 
+    p += Math.random() * 15; 
+    document.getElementById('sbar-inner').style.width = Math.min(p, 95) + '%'; 
+  }, 300);
+
   try {
-    document.getElementById('screen-input').style.opacity = '0.3';
-    const res=await fetch('http://127.0.0.1:5010/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({input:val})});
-    const data=await res.json();
-    gsap.to('#screen-input', {opacity:0, duration:0.6, onComplete:()=>{
-      document.getElementById('screen-input').style.display='none';
-      document.getElementById('screen-loading-dossier').style.display='flex';
-      setTimeout(()=> {
-        document.getElementById('explore-trigger').style.display='block';
-        gsap.fromTo('#explore-trigger', {opacity:0}, {opacity:1, duration:1.5});
-      }, 2000);
-    }});
+    const res = await fetch('/analyze', { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ input: val }) 
+    });
+    const data = await res.json();
+    
+    if (data.error) throw new Error(data.error);
+
+    clearInterval(intv); 
+    document.getElementById('sbar-inner').style.width = '100%';
+    document.getElementById('status-text').textContent = 'CONVERGENCE COMPLETE.';
+    
     populate(data);
-  } catch(e) { alert("CONNECTION ERROR"); }
+
+    setTimeout(() => {
+      gsap.to('#screen-input', {
+        opacity: 0, duration: 0.8, onComplete: () => {
+          document.getElementById('screen-input').style.display = 'none';
+          document.getElementById('screen-loading-dossier').style.display = 'flex';
+          gsap.fromTo('#screen-loading-dossier', { opacity: 0 }, { opacity: 1, duration: 0.8 });
+          
+          setTimeout(() => {
+            const btn = document.getElementById('explore-trigger');
+            btn.style.display = 'block';
+            gsap.fromTo(btn, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 1 });
+          }, 1000);
+        }
+      });
+    }, 800);
+  } catch (e) { 
+    alert("CONNECTION ERROR: " + (e.message || "SERVER OFFLINE"));
+    clearInterval(intv);
+    document.getElementById('status-wrap').style.display = 'none';
+  }
 };
 </script>
 </body>
